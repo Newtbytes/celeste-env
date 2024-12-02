@@ -92,6 +92,10 @@ size_t get_state_size(void) {
     return Celeste_P8_get_state_size();
 }
 
+void free_state(void* savestate) {
+    free(savestate);
+}
+
 void close(void) {
     free(initial_game_state);
 }
