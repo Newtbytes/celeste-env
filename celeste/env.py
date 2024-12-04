@@ -53,7 +53,7 @@ class CelesteEnv(gym.Env):
 
         terminated = room == 30
 
-        return np.array(self.save_state), reward, terminated, False, self.celeste.get_info()
+        return np.frombuffer(self.save_state, dtype=np.uint8), reward, terminated, False, self.celeste.get_info()
 
     def save(self):
         return self.save_state[:]
