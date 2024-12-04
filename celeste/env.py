@@ -7,6 +7,9 @@ from .ccleste import Celeste
 def uint_limit(bits):
     return 2 ** bits - 1
 
+def level_index(x, y):
+	return x%8+y*8
+
 
 class CelesteEnv(gym.Env):
     def __init__(self) -> None:
@@ -15,6 +18,7 @@ class CelesteEnv(gym.Env):
         self.celeste = Celeste()
         self.initial_state = self.celeste.save()
         self.save_state = self.celeste.save()
+        self.last_room = None
 
         self.observation_space = gym.spaces.Box(
             low=0,
@@ -28,13 +32,28 @@ class CelesteEnv(gym.Env):
         self.load(self.initial_state)
         self.save_state = self.celeste.save()
 
-        return self.save_state, {}
+        info = self.celeste.get_info()
+        self.last_room = level_index(info["room_x"], info["room_y"])
+
+        return self.save_state, info
 
     def step(self, action: int):
         self.celeste.step(action)
         self.save_state = self.celeste.save()
 
-        return np.array(self.save_state), 0, False, False, self.celeste.get_info()
+        info = self.celeste.get_info()
+
+        room = level_index(info["room_x"], info["room_y"])
+
+        reward = 0
+        if room > self.last_room:
+            reward += room - self.last_room
+
+        self.last_room = room
+
+        terminated = room == 30
+
+        return np.array(self.save_state), reward, terminated, False, self.celeste.get_info()
 
     def save(self):
         return self.save_state[:]
