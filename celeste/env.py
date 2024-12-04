@@ -11,6 +11,10 @@ def level_index(x, y):
 	return x%8+y*8
 
 
+# TODO: implement single room goal
+# TODO: implement reward for achieving new maximum height in current room, max height is reset once room changes
+# TODO: implement rendering
+# once image rendering is implemented, implement human render mode with pygame or something
 class CelesteEnv(gym.Env):
     def __init__(self) -> None:
         super().__init__()
@@ -58,7 +62,7 @@ class CelesteEnv(gym.Env):
         room = level_index(info["room_x"], info["room_y"])
 
         reward = self._reward(room)
-        terminated = room == 30
+        terminated = room == 30 # TODO: verify this is the index of the final room
 
         self.last_room = room
 

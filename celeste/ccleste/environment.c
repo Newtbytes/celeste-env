@@ -14,6 +14,8 @@ static int gettileflag(int tile, int flag) {
 	return tile < sizeof(tile_flags)/sizeof(*tile_flags) && (tile_flags[tile] & (1 << flag)) != 0;
 }
 
+// TODO: implement image observations
+// write drawing operations to buffer and convert buffer to numpy array in ccleste.pyx
 int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 	va_list args;
 	int ret = 0;
