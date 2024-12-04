@@ -91,6 +91,7 @@ PlayerState get_player_state(void) {
 		#define ATTR(n) player_state->n,
 		return (PlayerState){
 			ATTR(spd)
+			ATTR(x) ATTR(y)
 			ATTR(grace) ATTR(jbuffer) ATTR(djump) ATTR(dash_time)
 			ATTR(was_on_ground)
 		};
@@ -99,6 +100,7 @@ PlayerState get_player_state(void) {
 	else {
 		return (PlayerState){
 			(VEC){0, 0},
+			0, 0,
 			0, 0, 0, 0,
 			false
 		};
