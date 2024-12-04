@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -8,8 +9,7 @@
 #include "environment.h"
 
 
-static unsigned short buttons_state = 0;
-static void* initial_game_state = NULL;
+static uint16_t buttons_state = 0;
 
 
 static int gettileflag(int tile, int flag) {
@@ -17,8 +17,6 @@ static int gettileflag(int tile, int flag) {
 }
 
 int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
-	static int camera_x = 0, camera_y = 0;
-
 	va_list args;
 	int ret = 0;
 	va_start(args, call);
@@ -58,18 +56,8 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 void init(void) {
     Celeste_P8_set_call_func(pico8emu);
 
-    reset();
-
-	initial_game_state = save();
-}
-
-void reset(void) {
-    // TODO: support seeding env
     Celeste_P8_set_rndseed(8);
-
     Celeste_P8_init();
-
-    if (initial_game_state) Celeste_P8_load_state(initial_game_state);
 }
 
 void step(unsigned short action) {
@@ -94,8 +82,4 @@ size_t get_state_size(void) {
 
 void free_state(void* savestate) {
     free(savestate);
-}
-
-void close(void) {
-    free(initial_game_state);
 }
