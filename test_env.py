@@ -1,10 +1,13 @@
 from celeste import CelesteEnv
 
 from gymnasium.utils.performance import benchmark_step
+from gymnasium.utils.env_checker import check_env
 
 env = CelesteEnv()
 
 print(benchmark_step(env), "fps")
+
+check_env(env)
 
 
 env.reset()

@@ -28,14 +28,26 @@ class CelesteEnv(gym.Env):
         )
         self.action_space = gym.spaces.Discrete(uint_limit(6) + 1)
 
-    def reset(self, **_):
+    def _obs(self):
+        return np.frombuffer(self.save_state, dtype=np.uint8)
+    
+    def _reward(self, room):
+        reward = 0
+        if room > self.last_room:
+            reward += room - self.last_room
+
+        return reward
+
+    def reset(self, seed=None, **kwargs):
+        super().reset(seed=seed)
+
         self.load(self.initial_state)
         self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
         self.last_room = level_index(info["room_x"], info["room_y"])
 
-        return self.save_state, info
+        return self._obs(), info
 
     def step(self, action: int):
         self.celeste.step(action)
@@ -45,15 +57,12 @@ class CelesteEnv(gym.Env):
 
         room = level_index(info["room_x"], info["room_y"])
 
-        reward = 0
-        if room > self.last_room:
-            reward += room - self.last_room
+        reward = self._reward(room)
+        terminated = room == 30
 
         self.last_room = room
 
-        terminated = room == 30
-
-        return np.frombuffer(self.save_state, dtype=np.uint8), reward, terminated, False, self.celeste.get_info()
+        return self._obs(), reward, terminated, False, info
 
     def save(self):
         return self.save_state[:]
