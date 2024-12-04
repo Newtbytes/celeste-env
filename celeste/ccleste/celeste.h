@@ -135,6 +135,7 @@ typedef struct {
 
 // return pointer to the player object, so it can be accessed by users of celeste.h
 OBJ* Celeste_get_player_state(void);
+VECI* Celeste_get_room_state(void);
 
 extern void Celeste_P8_set_call_func(Celeste_P8_cb_func_t func);
 extern void Celeste_P8_set_rndseed(unsigned seed);

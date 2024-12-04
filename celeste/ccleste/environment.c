@@ -102,3 +102,10 @@ PlayerState get_player_state(void) {
 		};
 	}
 }
+
+RoomState get_room_state(void) {
+	VECI* room = Celeste_get_room_state();
+	return (RoomState){
+		room->x, room->y
+	};
+}

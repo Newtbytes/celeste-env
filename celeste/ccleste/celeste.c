@@ -318,6 +318,10 @@ OBJ* Celeste_get_player_state() {
 	return player_state;
 }
 
+VECI* Celeste_get_room_state() {
+	return &room;
+}
+
 // entry point //
 /////////////////
 

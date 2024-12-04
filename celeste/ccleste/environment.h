@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "celeste.h"
 
 
@@ -21,5 +22,10 @@ typedef struct PlayerState {
     bool was_on_ground;
 } PlayerState;
 
+typedef struct RoomState {
+    int x, y;
+} RoomState;
+
 
 PlayerState get_player_state(void);
+RoomState get_room_state(void);

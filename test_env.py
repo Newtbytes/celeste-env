@@ -14,6 +14,6 @@ env.action_space.seed(42)
 for i in range(1000):
     _, _, _, _, info = env.step(env.action_space.sample())
 
-    # print last 5 info dicts to show that something is happening
+    # print last 4 info dicts to show that something is happening
     if i > 995:
         print(info)

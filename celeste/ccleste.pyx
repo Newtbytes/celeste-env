@@ -9,12 +9,12 @@ cdef extern from "environment.h":
     size_t get_state_size()
     void free_state(void* savestate)
 
-    cdef struct Vec:
+    cdef struct VEC:
         float x
         float y
 
     cdef struct PlayerState:
-        Vec spd
+        VEC spd
 
         float x
         float y
@@ -26,7 +26,12 @@ cdef extern from "environment.h":
 
         bint was_on_ground
 
+    cdef struct RoomState:
+        int x
+        int y
+
     PlayerState get_player_state()
+    RoomState get_room_state()
 
 
 cdef class Celeste:
@@ -38,6 +43,7 @@ cdef class Celeste:
 
     def get_info(self):
         cdef PlayerState p = get_player_state()
+        cdef RoomState r = get_room_state()
 
         return {
             "spd_x": p.spd.x,
@@ -47,7 +53,9 @@ cdef class Celeste:
             "grace": p.grace,
             "jbuffer": p.jbuffer,
             "djump": p.djump,
-            "dash_time": p.dash_time
+            "dash_time": p.dash_time,
+            "room_x": r.x,
+            "room_y": r.y
         }
 
     def save(self):
