@@ -6,7 +6,7 @@ extensions = [
         "ccleste", 
         sources=["ccleste.pyx", "ccleste/environment.c", "ccleste/celeste.c"],
         include_dirs=[".", "ccleste/"],
-        extra_compile_args=["-Ofast", "-flto"]
+        extra_compile_args=["-Ofast"]
     )
 ]
 

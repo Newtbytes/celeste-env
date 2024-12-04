@@ -140,10 +140,6 @@ static void next_room(void);
 static void psfx(int num);
 static void restart_room(void);
 
-#define bool Celeste_P8_bool_t
-#define false 0
-#define true 1
-
 static float clamp(float val, float a, float b);
 static float appr(float val, float target, float amount);
 static float sign(float v);
@@ -285,9 +281,6 @@ static inline bool solid_at(float x,float y,float w,float h) { return solid_at(i
 // globals
 //////////////
 
-typedef struct {float x,y;} VEC;
-typedef struct {int x,y;} VECI;
-
 static VECI room = {.x=0,.y=0};
 //static int num_objects = 0;
 static int freeze = 0;
@@ -319,35 +312,11 @@ enum {
   k_dash  = 5
 };
 
-//with this X macro table thing we can define the properties that each object type has, in the original lua code these properties
-//are inferred from the `types` table
-#define OBJ_PROP_LIST() \
-	/* TYPE        TILE   HAS INIT  HAS UPDATE  HAS DRAW    IF_NOT_FRUIT */\
-	X(PLAYER,       -1,     Y,        Y,          Y,            false)\
-	X(PLAYER_SPAWN,  1,     Y,        Y,          Y,            false)\
-	X(SPRING,       18,     Y,        Y,          N,            false)\
-	X(BALLOON,      22,     Y,        Y,          Y,            false)\
-	X(SMOKE,        -1,     Y,        Y,          N,            false)\
-	X(PLATFORM,     -1,     Y,        Y,          Y,            false)\
-	X(FALL_FLOOR,   23,     Y,        Y,          Y,            false)\
-	X(FRUIT,        26,     Y,        Y,          N,             true)\
-	X(FLY_FRUIT,    28,     Y,        Y,          Y,             true)\
-	X(FAKE_WALL,    64,     N,        Y,          Y,             true)\
-	X(KEY,           8,     N,        Y,          N,             true)\
-	X(CHEST,        20,     Y,        Y,          N,             true)\
-	X(LIFEUP,       -1,     Y,        Y,          Y,            false)\
-	X(MESSAGE,      86,     N,        N,          Y,            false)\
-	X(BIG_CHEST,    96,     Y,        N,          Y,            false)\
-	X(ORB,          -1,     Y,        N,          Y,            false)\
-	X(FLAG,        118,     Y,        N,          Y,            false)\
-	X(ROOM_TITLE,   -1,     Y,        N,          Y,            false)
+OBJ* player_state;
 
-typedef enum {
-	#define X(t,...) OBJ_##t,
-	OBJ_PROP_LIST()
-	#undef X
-	OBJTYPE_COUNT
-} OBJTYPE;
+OBJ* Celeste_get_player_state() {
+	return player_state;
+}
 
 // entry point //
 /////////////////
@@ -418,11 +387,6 @@ static void PRELUDE_initclouds() {
 	}
 }
 
-typedef struct {
-	bool active;
-	float x,y,s,spd,off,c,h,t;
-	VEC spd2; //used by dead particles, moved from spd
-} PARTICLE;
 static PARTICLE particles[25];
 static PARTICLE dead_particles[8];
 
@@ -440,77 +404,6 @@ static void PRELUDE_initparticles() {
 	}
 }
 
-typedef struct {int x,y,w,h;} HITBOX;
-
-typedef struct {
-	float x,y,size;
-	bool isLast;
-} HAIR;
-
-//OBJECT strucutre
-typedef struct {
-	bool active;
-	short id; //unique identifier for each object, incremented per object
-
-	//inherited
-	OBJTYPE type;
-	bool collideable, solids;
-	float spr;
-	bool flip_x, flip_y;
-	float x, y;
-	HITBOX hitbox;
-	VEC spd;
-	VEC rem;
-
-	//player
-	bool p_jump, p_dash;
-	int grace, jbuffer, djump, dash_time;
-	short dash_effect_time; //can underflow in normal gameplay (after 18 minutes)
-	VEC dash_target;
-	VEC dash_accel;
-	float spr_off;
-	bool was_on_ground;
-	HAIR hair[5]; //also player_spawn
-
-	//player_spawn
-	int state, delay;
-	VEC target;
-
-	//spring
-	int hide_in, hide_for;
-
-	//balloon
-	int timer;
-	float offset, start;
-
-	//fruit
-	float off;
-
-	//fly_fruit
-	bool fly;
-	float step;
-	int sfx_delay;
-
-	//lifeup
-	int duration;
-	float flash;
-
-	//platform
-	float last, dir;
-
-	//message
-	const char* text;
-	float index;
-	VECI off2; //changed from off..
-
-	//big chest
-	PARTICLE particles[50];
-	int particle_count;
-
-	//flag
-	int score;
-	bool show;
-} OBJ;
 
 //OBJ function declarations fuckery
 #define when_Y(x) static void x(OBJ* this);
@@ -672,6 +565,9 @@ static void PLAYER_init(OBJ* this) {
 	this->spr_off=0;
 	this->was_on_ground=false;
 	create_hair(this);
+
+	// update the player_state pointer so player_state can be accessed by users of celeste.h
+	player_state = this;
 }
 	
 static OBJ player_dummy_copy; //see below
@@ -1686,7 +1582,7 @@ void Celeste_P8_update() {
 			minutes+=1;
 		}
 	}
-   
+
 	if (music_timer>0) {
 		music_timer-=1;
 		if (music_timer<=0) {
@@ -1697,7 +1593,7 @@ void Celeste_P8_update() {
 	if (sfx_timer>0) {
 		sfx_timer-=1;
 	}
-   
+
 	// cancel if (freeze
 	if (freeze>0) { freeze-=1; return; }
 
@@ -1747,7 +1643,7 @@ void Celeste_P8_update() {
 
 	}
 	//printf("END FRAME\n\n");
-   
+
 	// start game
 	if (is_title()) {
 		if (!start_game && (P8btn(k_jump) || P8btn(k_dash))) {

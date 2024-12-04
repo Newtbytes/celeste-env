@@ -22,7 +22,7 @@ class CelesteEnv(gym.Env):
             shape=(len(self.save_state),),
             dtype=np.uint8,
         )
-        self.action_space = gym.spaces.Discrete(uint_limit(16) + 1)
+        self.action_space = gym.spaces.Discrete(uint_limit(6) + 1)
 
     def reset(self, **_):
         self.load(self.initial_state)
@@ -34,7 +34,7 @@ class CelesteEnv(gym.Env):
         self.celeste.step(action)
         self.save_state = self.celeste.save()
 
-        return np.array(self.save_state), 0, False, False, {}
+        return np.array(self.save_state), 0, False, False, self.celeste.get_info()
 
     def save(self):
         return self.save_state[:]

@@ -1,6 +1,4 @@
 #include <stdarg.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -9,7 +7,7 @@
 #include "environment.h"
 
 
-static uint16_t buttons_state = 0;
+static Uint16 buttons_state = 0;
 
 
 static int gettileflag(int tile, int flag) {
@@ -60,7 +58,7 @@ void init(void) {
     Celeste_P8_init();
 }
 
-void step(unsigned short action) {
+void step(Uint16 action) {
     buttons_state = action;
     Celeste_P8_update();
 }
@@ -82,4 +80,25 @@ size_t get_state_size(void) {
 
 void free_state(void* savestate) {
     free(savestate);
+}
+
+PlayerState get_player_state(void) {
+	OBJ* player_state = Celeste_get_player_state();
+
+	if (player_state != NULL) {
+		#define ATTR(n) player_state->n,
+		return (PlayerState){
+			ATTR(spd)
+			ATTR(grace) ATTR(jbuffer) ATTR(djump) ATTR(dash_time)
+			ATTR(was_on_ground)
+		};
+		#undef ATTR
+	}
+	else {
+		return (PlayerState){
+			(VEC){0, 0},
+			0, 0, 0, 0,
+			false
+		};
+	}
 }
