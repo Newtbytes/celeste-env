@@ -322,6 +322,23 @@ VECI* Celeste_get_room_state() {
 	return &room;
 }
 
+
+static int fruits;
+
+void Celeste_get_gameplay_time(short* min, int* sec, int* f) {
+	*min = minutes;
+	*sec = seconds;
+	*f   = frames;
+}
+
+int Celeste_get_deaths() {
+	return deaths;
+}
+
+int Celeste_get_fruits() {
+	return fruits;
+}
+
 // entry point //
 /////////////////
 
@@ -344,6 +361,7 @@ void Celeste_P8_init() { //identifiers beginning with underscores are reserved i
 static void title_screen() {
 	for (int i = 0; i <= 29; i++)
 		got_fruit[i] = false;
+	fruits = 0;
 	frames=0;
 	deaths=0;
 	max_djump=1;
@@ -1063,6 +1081,7 @@ static void FRUIT_update(OBJ* this) {
 		sfx_timer=20;
 		P8sfx(13);
 		got_fruit[level_index()] = true;
+		fruits++;
 		init_object(OBJ_LIFEUP,this->x,this->y);
 		destroy_object(this);
 		return; //LEMON: added return to not modify dead object
@@ -1111,6 +1130,7 @@ static void FLY_FRUIT_update(OBJ* this) {
 		sfx_timer=20;
 		P8sfx(13);
 		got_fruit[level_index()] = true;
+		fruits++;
 		init_object(OBJ_LIFEUP,this->x,this->y);
 		do_destroy_object = true;
 	}

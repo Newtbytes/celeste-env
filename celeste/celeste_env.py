@@ -11,18 +11,25 @@ def level_index(x, y):
 	return x%8+y*8
 
 
+# TODO: implement binding for load_room
+# Level index / room x,y should be converted to something intuitive like 1 for level 1, etc.
+# TODO: implement room name in info dict
 # TODO: implement single room goal
-# TODO: implement reward for achieving new maximum height in current room, max height is reset once room changes
 # TODO: implement rendering
 # once image rendering is implemented, implement human render mode with pygame or something
 class CelesteEnv(gym.Env):
-    def __init__(self) -> None:
+    def __init__(self, terminate_on_death=False) -> None:
         super().__init__()
+
+        self.terminate_on_death = terminate_on_death
 
         self.celeste = Celeste()
         self.initial_state = self.celeste.save()
         self.save_state = self.celeste.save()
-        self.last_room = None
+        
+        self._last_room = None
+        self._last_info = {}
+        self._max_y = float("-inf")
 
         self.observation_space = gym.spaces.Box(
             low=0,
@@ -34,6 +41,28 @@ class CelesteEnv(gym.Env):
 
     def _obs(self):
         return np.frombuffer(self.save_state, dtype=np.uint8)
+    
+    def _reward(self, info, room):
+        reward = 5 if room != self._last_room else 0
+
+        reward += (info["fruits"] - self._last_info["fruits"]) * 2
+        reward -= (info["deaths"]  - self._last_info["deaths"])
+
+        # TODO: check if this is correct. y axis may be flipped, so this may be incorrect.
+        if self._max_y == info["y"] and self._last_info["y"] < self._max_y:
+            reward += (info["y"] - self._last_info["y"]) * 0.1
+
+        reward += max(info["spd_y"] - self._last_info["spd_y"], 0)
+
+        return reward
+
+    def _done(self, info, room):
+        done = room == 30
+
+        if self.terminate_on_death:
+            done = info["deaths"] > 0
+
+        return done
 
     def reset(self, seed=None, **kwargs):
         super().reset(seed=seed)
@@ -42,7 +71,9 @@ class CelesteEnv(gym.Env):
         self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
-        self.last_room = level_index(info["room_x"], info["room_y"])
+        self._last_room = level_index(info["room_x"], info["room_y"])
+        self._last_info = info
+        self._max_y = max(self._max_y, info["y"])
 
         return self._obs(), info
 
@@ -51,13 +82,20 @@ class CelesteEnv(gym.Env):
         self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
-
         room = level_index(info["room_x"], info["room_y"])
 
-        reward = 1 if room != self.last_room else 0
-        terminated = room == 30 # TODO: verify this is the index of the final room
+        if room == self._last_room:
+            self._max_y = max(self._max_y, info["y"])
+        else:
+            self._max_y = info["y"]
 
-        self.last_room = room
+
+        reward = self._reward(info, room)
+        terminated = self._done(info, room)
+
+
+        self._last_room = room
+        self._last_info = info
 
         return self._obs(), reward, terminated, False, info
 

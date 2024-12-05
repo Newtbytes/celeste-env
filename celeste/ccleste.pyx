@@ -10,21 +10,20 @@ cdef extern from "environment.h":
     void free_state(void* savestate)
 
     cdef struct VEC:
-        float x
-        float y
+        float x, y
 
     cdef struct PlayerState:
         VEC spd
 
-        float x
-        float y
+        float x, y
 
-        int grace
-        int jbuffer
-        int djump
-        int dash_time
+        int grace, jbuffer, djump, dash_time
 
         bint was_on_ground
+
+        int deaths, fruits
+        short minutes
+        int seconds, frames
 
     cdef struct RoomState:
         int x
@@ -55,7 +54,11 @@ cdef class Celeste:
             "djump": p.djump,
             "dash_time": p.dash_time,
             "room_x": r.x,
-            "room_y": r.y
+            "room_y": r.y,
+            "deaths": p.deaths,
+            "fruits": p.fruits,
+            "minutes": p.minutes,
+            "seconds": p.seconds + (1 / 30) * p.frames
         }
 
     def save(self):

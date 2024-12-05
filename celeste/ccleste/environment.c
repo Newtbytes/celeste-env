@@ -87,6 +87,13 @@ void free_state(void* savestate) {
 PlayerState get_player_state(void) {
 	OBJ* player_state = Celeste_get_player_state();
 
+	short minutes = 0;
+	int seconds, frames = 0;
+	Celeste_get_gameplay_time(&minutes, &seconds, &frames);
+
+	int deaths = Celeste_get_deaths();
+	int fruits = Celeste_get_fruits();
+
 	if (player_state != NULL) {
 		#define ATTR(n) player_state->n,
 		return (PlayerState){
@@ -94,6 +101,8 @@ PlayerState get_player_state(void) {
 			ATTR(x) ATTR(y)
 			ATTR(grace) ATTR(jbuffer) ATTR(djump) ATTR(dash_time)
 			ATTR(was_on_ground)
+			deaths, fruits,
+			minutes, seconds, frames,
 		};
 		#undef ATTR
 	}
@@ -102,7 +111,9 @@ PlayerState get_player_state(void) {
 			(VEC){0, 0},
 			0, 0,
 			0, 0, 0, 0,
-			false
+			false,
+			0, 0,
+			0, 0, 0
 		};
 	}
 }

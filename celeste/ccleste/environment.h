@@ -20,6 +20,9 @@ typedef struct PlayerState {
     float x, y;
     int grace, jbuffer, djump, dash_time;
     bool was_on_ground;
+    int deaths, fruits;
+    short minutes;
+    int seconds, frames;
 } PlayerState;
 
 typedef struct RoomState {
