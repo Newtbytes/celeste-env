@@ -34,13 +34,6 @@ class CelesteEnv(gym.Env):
 
     def _obs(self):
         return np.frombuffer(self.save_state, dtype=np.uint8)
-    
-    def _reward(self, room):
-        reward = 0
-        if room > self.last_room:
-            reward += room - self.last_room
-
-        return reward
 
     def reset(self, seed=None, **kwargs):
         super().reset(seed=seed)
@@ -61,7 +54,7 @@ class CelesteEnv(gym.Env):
 
         room = level_index(info["room_x"], info["room_y"])
 
-        reward = self._reward(room)
+        reward = 1 if room != self.last_room else 0
         terminated = room == 30 # TODO: verify this is the index of the final room
 
         self.last_room = room
