@@ -21,8 +21,28 @@ typedef int (*Celeste_P8_cb_func_t) (CELESTE_P8_CALLBACK_TYPE calltype, ...);
 #define false 0
 #define true 1
 
+extern void Celeste_P8_set_call_func(Celeste_P8_cb_func_t func);
+extern void Celeste_P8_set_rndseed(unsigned seed);
+extern void Celeste_P8_init(void);
+extern void Celeste_P8_update(void);
+extern void Celeste_P8_draw(void);
 
-typedef struct {float x,y;} VEC;
+extern void Celeste_P8__DEBUG(void); //debug functionality
+
+//state functionality
+size_t Celeste_P8_get_state_size(void);
+void Celeste_P8_save_state(void* st);
+void Celeste_P8_load_state(const void* st);
+
+#ifdef __cplusplus
+} //extern "C"
+#endif
+
+
+#include "fixedp.h"
+
+
+typedef struct {decimal x,y;} VEC;
 typedef struct {int x,y;} VECI;
 
 //with this X macro table thing we can define the properties that each object type has, in the original lua code these properties
@@ -57,14 +77,14 @@ typedef enum {
 
 typedef struct {
 	bool active;
-	float x,y,s,spd,off,c,h,t;
+	decimal x,y,s,spd,off,c,h,t;
 	VEC spd2; //used by dead particles, moved from spd
 } PARTICLE;
 
 typedef struct {int x,y,w,h;} HITBOX;
 
 typedef struct {
-	float x,y,size;
+	decimal x,y,size;
 	bool isLast;
 } HAIR;
 
@@ -76,9 +96,9 @@ typedef struct {
 	//inherited
 	OBJTYPE type;
 	bool collideable, solids;
-	float spr;
+	decimal spr;
 	bool flip_x, flip_y;
-	float x, y;
+	decimal x, y;
 	HITBOX hitbox;
 	VEC spd;
 	VEC rem;
@@ -89,7 +109,7 @@ typedef struct {
 	short dash_effect_time; //can underflow in normal gameplay (after 18 minutes)
 	VEC dash_target;
 	VEC dash_accel;
-	float spr_off;
+	decimal spr_off;
 	bool was_on_ground;
 	HAIR hair[5]; //also player_spawn
 
@@ -102,26 +122,26 @@ typedef struct {
 
 	//balloon
 	int timer;
-	float offset, start;
+	decimal offset, start;
 
 	//fruit
-	float off;
+	decimal off;
 
 	//fly_fruit
 	bool fly;
-	float step;
+	decimal step;
 	int sfx_delay;
 
 	//lifeup
 	int duration;
-	float flash;
+	decimal flash;
 
 	//platform
-	float last, dir;
+	decimal last, dir;
 
 	//message
 	const char* text;
-	float index;
+	decimal index;
 	VECI off2; //changed from off..
 
 	//big chest
@@ -134,6 +154,10 @@ typedef struct {
 } OBJ;
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Game Info
 
 // return pointer to the player object, so it can be accessed by users of celeste.h
@@ -142,19 +166,6 @@ VECI* Celeste_get_room_state(void);
 void Celeste_get_gameplay_time(short* min, int* sec, int* f);
 int Celeste_get_deaths(void);
 int Celeste_get_fruits(void);
-
-extern void Celeste_P8_set_call_func(Celeste_P8_cb_func_t func);
-extern void Celeste_P8_set_rndseed(unsigned seed);
-extern void Celeste_P8_init(void);
-extern void Celeste_P8_update(void);
-extern void Celeste_P8_draw(void);
-
-extern void Celeste_P8__DEBUG(void); //debug functionality
-
-//state functionality
-size_t Celeste_P8_get_state_size(void);
-void Celeste_P8_save_state(void* st);
-void Celeste_P8_load_state(const void* st);
 
 #ifdef __cplusplus
 } //extern "C"

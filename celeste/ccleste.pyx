@@ -9,11 +9,8 @@ cdef extern from "environment.h":
     size_t get_state_size()
     void free_state(void* savestate)
 
-    cdef struct VEC:
-        float x, y
-
     cdef struct PlayerState:
-        VEC spd
+        float spd_x, spd_y
 
         float x, y
 
@@ -45,8 +42,8 @@ cdef class Celeste:
         cdef RoomState r = get_room_state()
 
         return {
-            "spd_x": p.spd.x,
-            "spd_y": p.spd.y,
+            "spd_x": p.spd_x,
+            "spd_y": p.spd_y,
             "x": p.x,
             "y": p.y,
             "grace": p.grace,

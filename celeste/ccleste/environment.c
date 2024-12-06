@@ -58,11 +58,20 @@ void init(void) {
 
     Celeste_P8_set_rndseed(8);
     Celeste_P8_init();
+
+
+	for (int t = 1; t <= 80; t++) {
+		if (t==1) buttons_state = 1<<4;
+		else buttons_state = 0;
+
+		Celeste_P8_update();
+	}
 }
 
 void step(Uint16 action) {
     buttons_state = action;
     Celeste_P8_update();
+	Celeste_P8_draw();
 }
 
 void* save(void) {
@@ -97,8 +106,8 @@ PlayerState get_player_state(void) {
 	if (player_state != NULL) {
 		#define ATTR(n) player_state->n,
 		return (PlayerState){
-			ATTR(spd)
-			ATTR(x) ATTR(y)
+			(float)ATTR(spd.x) (float)ATTR(spd.y)
+			(float)ATTR(x) (float)ATTR(y)
 			ATTR(grace) ATTR(jbuffer) ATTR(djump) ATTR(dash_time)
 			ATTR(was_on_ground)
 			deaths, fruits,
@@ -108,7 +117,7 @@ PlayerState get_player_state(void) {
 	}
 	else {
 		return (PlayerState){
-			(VEC){0, 0},
+			0, 0,
 			0, 0,
 			0, 0, 0, 0,
 			false,

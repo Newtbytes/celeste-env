@@ -16,7 +16,7 @@ void free_state(void* savestate);
 
 
 typedef struct PlayerState {
-    VEC spd;
+    float spd_x, spd_y;
     float x, y;
     int grace, jbuffer, djump, dash_time;
     bool was_on_ground;
