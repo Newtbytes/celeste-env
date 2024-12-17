@@ -1348,7 +1348,7 @@ static OBJ* init_object(OBJTYPE type, decimal x, decimal y) {
 	}
 	if (!obj) {
 		//no more free space for objects, give up
-		printf("exhausted object memory..\n");
+		//printf("exhausted object memory..\n");
 		return NULL;
 	}
 	obj->active = true;
