@@ -204,4 +204,9 @@ cython_debug/
 # Cython generated file
 ccleste.c
 
+# VSCode project settings
 .vscode/
+
+# Profiling
+*.profraw
+*.profdata

@@ -8,6 +8,8 @@ tas = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,2,2,2,2,2,2,2,2,
 
 env = CelesteEnv()
 
+BENCH_DURATION = 30
+
 
 def level_index(x, y):
 	return x%8+y*8
@@ -32,7 +34,12 @@ def test_tas():
         if terminated or truncated:
             env.reset()
 
-check_env(env)
-test_tas()
+def run_tests():
+    check_env(env)
+    test_tas()
 
-print(benchmark_step(env), "fps")
+    return benchmark_step(env, target_duration=BENCH_DURATION)
+
+
+if __name__ == "__main__":
+    print(run_tests(), "fps")
