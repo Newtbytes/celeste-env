@@ -6,7 +6,7 @@ from Cython.Build import cythonize
 
 os.environ["CC"] = "clang++"
 
-BASE_COMPILE_ARGS = ["-Ofast", "-march=native", "-fPIC", "-ftree-vectorize", "-fno-semantic-interposition", "-flto"]
+BASE_COMPILE_ARGS = ["-O3", "-march=native", "-fPIC", "-ftree-vectorize", "-fno-semantic-interposition", "-flto"]
 BASE_LINK_ARGS = ["-flto"]
 PROF_ARGS = ["-fprofile-generate"]
 PGO_ARGS = PROF_ARGS + ["-fprofile-use"]
