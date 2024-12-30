@@ -162,10 +162,11 @@ extern "C" {
 
 // return pointer to the player object, so it can be accessed by users of celeste.h
 OBJ* Celeste_get_player_state(void);
-VECI* Celeste_get_room_state(void);
+unsigned char Celeste_get_room(void);
 void Celeste_get_gameplay_time(short* min, int* sec, int* f);
 int Celeste_get_deaths(void);
 int Celeste_get_fruits(void);
+void Celeste_load_room(unsigned char room_index);
 
 #ifdef __cplusplus
 } //extern "C"

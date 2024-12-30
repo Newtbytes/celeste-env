@@ -9,8 +9,8 @@ SEED = 42
 env = CelesteEnv()
 
 
-def level_index(x, y):
-	return x%8+y*8
+def test_spec():
+    check_env(env)
 
 def test_tas():
     env.reset()
@@ -24,9 +24,9 @@ def test_tas():
     for f, a in enumerate(tas):
         _, _, terminated, truncated, info = env.step(a)
         if (f+1) == 1:
-            assert info["room_x"] == 0 and info["room_y"] == 0
+            assert info["room"] == 0
 
-        room = level_index(info["room_x"], info["room_y"])
+        room = info["room"]
 
         rooms.add(room)
 
@@ -38,5 +38,13 @@ def test_tas():
     assert(len(rooms) == 31)
     assert(rooms == set(i for i in range(31)))
 
-def test_spec():
-    check_env(env)
+def test_load_room():
+    for room in range(31):
+        env.reset()
+
+        env.load_room(room)
+
+        for _ in range(2):
+            _, _, _, _, info = env.step(env.action_space.sample())
+
+        assert info["room"] == room

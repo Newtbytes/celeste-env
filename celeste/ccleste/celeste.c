@@ -197,18 +197,21 @@ enum {
   k_dash  = 5
 };
 
+
 OBJ* player_state;
+static int fruits;
+
+
+static int level_index();
+
 
 OBJ* Celeste_get_player_state() {
 	return player_state;
 }
 
-VECI* Celeste_get_room_state() {
-	return &room;
+unsigned char Celeste_get_room() {
+	return level_index();
 }
-
-
-static int fruits;
 
 void Celeste_get_gameplay_time(short* min, int* sec, int* f) {
 	*min = minutes;
@@ -222,6 +225,18 @@ int Celeste_get_deaths() {
 
 int Celeste_get_fruits() {
 	return fruits;
+}
+
+VECI room_from_level_index(int level_index) {
+	return (VECI){
+		level_index % 8,
+		level_index / 8,
+	};
+}
+
+void Celeste_load_room(unsigned char room_index) {
+	VECI room_vec = room_from_level_index(room_index);
+	load_room(room_vec.x, room_vec.y);
 }
 
 // entry point //

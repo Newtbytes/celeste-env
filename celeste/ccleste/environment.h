@@ -25,10 +25,8 @@ typedef struct PlayerState {
     int seconds, frames;
 } PlayerState;
 
-typedef struct RoomState {
-    int x, y;
-} RoomState;
-
 
 PlayerState get_player_state(void);
-RoomState get_room_state(void);
+
+unsigned char get_room(void);
+void load_room(unsigned char room_index);

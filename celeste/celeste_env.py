@@ -7,9 +7,6 @@ from ccleste import Celeste
 def uint_limit(bits):
     return 2 ** bits - 1
 
-def level_index(x, y):
-	return x%8+y*8
-
 
 # TODO: implement binding for load_room
 # Level index / room x,y should be converted to something intuitive like 1 for level 1, etc.
@@ -71,7 +68,7 @@ class CelesteEnv(gym.Env):
         self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
-        self._last_room = level_index(info["room_x"], info["room_y"])
+        self._last_room = info["room"]
         self._last_info = info
         self._max_y = max(self._max_y, info["y"])
 
@@ -82,7 +79,7 @@ class CelesteEnv(gym.Env):
         self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
-        room = level_index(info["room_x"], info["room_y"])
+        room = info["room"]
 
         if room == self._last_room:
             self._max_y = max(self._max_y, info["y"])
@@ -98,6 +95,9 @@ class CelesteEnv(gym.Env):
         self._last_info = info
 
         return self._obs(), reward, terminated, False, info
+    
+    def load_room(self, room_index):
+        self.celeste.set_room(room_index)
 
     def save(self):
         return self.save_state[:]

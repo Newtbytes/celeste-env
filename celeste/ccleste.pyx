@@ -27,7 +27,9 @@ cdef extern from "environment.h":
         int y
 
     PlayerState get_player_state()
-    RoomState get_room_state()
+
+    unsigned char get_room()
+    void load_room(unsigned char room_index)
 
 
 cdef class Celeste:
@@ -37,9 +39,12 @@ cdef class Celeste:
     def step(self, unsigned short action):
         step(action)
 
+    def set_room(self, unsigned char room):
+        load_room(room)
+
     def get_info(self):
         cdef PlayerState p = get_player_state()
-        cdef RoomState r = get_room_state()
+        cdef unsigned char room = get_room()
 
         return {
             "spd_x": p.spd_x,
@@ -50,8 +55,7 @@ cdef class Celeste:
             "jbuffer": p.jbuffer,
             "djump": p.djump,
             "dash_time": p.dash_time,
-            "room_x": r.x,
-            "room_y": r.y,
+            "room": room,
             "deaths": p.deaths,
             "fruits": p.fruits,
             "minutes": p.minutes,
