@@ -54,8 +54,8 @@ if __name__ == "__main__":
     # run tests with profiling, gathering information for PGO
     os.environ["LLVM_PROFILE_FILE"] = "default.profraw"
 
-    from test_env import run_tests
-    run_tests()
+    from bench import bench_env
+    bench_env()
 
     subprocess.call(["llvm-profdata", "merge", "-output=default.profdata", "default.profraw"])
 
