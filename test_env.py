@@ -9,6 +9,7 @@ tas = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,2,2,2,2,2,2,2,2,
 env = CelesteEnv()
 
 BENCH_DURATION = 30
+SEED = 42
 
 
 def level_index(x, y):
@@ -38,7 +39,7 @@ def run_tests():
     check_env(env)
     test_tas()
 
-    return benchmark_step(env, target_duration=BENCH_DURATION)
+    return benchmark_step(env, target_duration=BENCH_DURATION, seed=SEED)
 
 
 if __name__ == "__main__":
