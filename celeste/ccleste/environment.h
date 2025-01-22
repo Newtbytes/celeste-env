@@ -29,4 +29,3 @@ typedef struct PlayerState {
 PlayerState get_player_state(void);
 
 unsigned char get_room(void);
-void load_room(unsigned char room_index);

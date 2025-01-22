@@ -29,7 +29,6 @@ cdef extern from "environment.h":
     PlayerState get_player_state()
 
     unsigned char get_room()
-    void load_room(unsigned char room_index)
 
 
 cdef class Celeste:
@@ -38,9 +37,6 @@ cdef class Celeste:
 
     def step(self, unsigned short action):
         step(action)
-
-    def set_room(self, unsigned char room):
-        load_room(room)
 
     def get_info(self):
         cdef PlayerState p = get_player_state()

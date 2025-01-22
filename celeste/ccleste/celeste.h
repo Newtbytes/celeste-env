@@ -166,7 +166,6 @@ unsigned char Celeste_get_room(void);
 void Celeste_get_gameplay_time(short* min, int* sec, int* f);
 int Celeste_get_deaths(void);
 int Celeste_get_fruits(void);
-void Celeste_load_room(unsigned char room_index);
 
 #ifdef __cplusplus
 } //extern "C"

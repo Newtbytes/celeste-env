@@ -130,7 +130,3 @@ PlayerState get_player_state(void) {
 unsigned char get_room(void) {
 	return Celeste_get_room();
 }
-
-void load_room(unsigned char room_index) {
-	Celeste_load_room(room_index);
-}

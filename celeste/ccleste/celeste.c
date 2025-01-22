@@ -234,11 +234,6 @@ VECI room_from_level_index(int level_index) {
 	};
 }
 
-void Celeste_load_room(unsigned char room_index) {
-	VECI room_vec = room_from_level_index(room_index);
-	load_room(room_vec.x, room_vec.y);
-}
-
 // entry point //
 /////////////////
 

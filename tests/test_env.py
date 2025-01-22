@@ -37,14 +37,3 @@ def test_tas():
 
     assert(len(rooms) == 31)
     assert(rooms == set(i for i in range(31)))
-
-def test_load_room():
-    for room in range(31):
-        env.reset()
-
-        env.load_room(room)
-
-        for _ in range(2):
-            _, _, _, _, info = env.step(env.action_space.sample())
-
-        assert info["room"] == room

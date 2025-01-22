@@ -8,7 +8,6 @@ def uint_limit(bits):
     return 2 ** bits - 1
 
 
-# TODO: implement binding for load_room
 # Level index / room x,y should be converted to something intuitive like 1 for level 1, etc.
 # TODO: implement room name in info dict
 # TODO: implement single room goal
@@ -95,9 +94,6 @@ class CelesteEnv(gym.Env):
         self._last_info = info
 
         return self._obs(), reward, terminated, False, info
-    
-    def load_room(self, room_index):
-        self.celeste.set_room(room_index)
 
     def save(self):
         return self.save_state[:]
