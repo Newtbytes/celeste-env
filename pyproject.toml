@@ -1,2 +1,6 @@
 [build-system]
 requires = ["setuptools", "wheel", "Cython", "gymnasium"]
+build-backend = "setuptools.build_meta"
+
+[build]
+compiler = "clang++"

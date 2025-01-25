@@ -202,7 +202,7 @@ cython_debug/
 
 ## celeste-env
 # Cython generated file
-ccleste.c
+ccleste.cpp
 
 # VSCode project settings
 .vscode/
