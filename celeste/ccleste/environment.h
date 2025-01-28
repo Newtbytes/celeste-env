@@ -3,6 +3,10 @@
 
 
 typedef unsigned short Uint16;
+typedef unsigned int Uint32;
+
+
+#define SCREEN_SIZE 128
 
 
 void init(void);
@@ -29,3 +33,5 @@ typedef struct PlayerState {
 PlayerState get_player_state(void);
 
 unsigned char get_room(void);
+
+void get_screen(int input_screen[SCREEN_SIZE][SCREEN_SIZE]);

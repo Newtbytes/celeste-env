@@ -1,3 +1,7 @@
+cimport numpy as np
+import numpy as np
+
+
 cdef extern from "environment.h":
     void init()
 
@@ -29,6 +33,22 @@ cdef extern from "environment.h":
     PlayerState get_player_state()
 
     unsigned char get_room()
+
+    void get_screen(int input_screen[128][128])
+
+
+cdef get_screen_as_np(int rows, int cols):
+    cdef int screen[128][128]
+    get_screen(screen)
+
+    cdef np.ndarray[int, ndim=2] np_array = np.zeros((rows, cols), dtype=np.int32)
+
+    cdef int i, j
+    for i in range(rows):
+        for j in range(cols):
+            np_array[i, j] = screen[i][j]
+
+    return np_array
 
 
 cdef class Celeste:
@@ -79,3 +99,6 @@ cdef class Celeste:
 
     def get_state_size(self):
         return get_state_size()
+
+    def get_screen(self) -> np.ndarray:
+        return get_screen_as_np(128, 128)

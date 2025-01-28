@@ -113,7 +113,6 @@ static _fix32 _fix32_abs(_fix32 x) {
 
 
 #ifdef __cplusplus
-#define this xthis //this is a keyword in C++
 #endif
 
 #endif

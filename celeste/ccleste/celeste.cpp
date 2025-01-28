@@ -15,6 +15,7 @@
 #include "celeste.h"
 
 
+#define this xthis
 //i cant be bothered to put all function declarations in an appropiate place so ill just toss them all here:
 static void PRELUDE(void);
 static void PRELUDE_initclouds(void);
@@ -1846,3 +1847,5 @@ void Celeste_P8_load_state(const void* st_) {
 }
 
 #undef LISTGVARS
+
+#undef this
