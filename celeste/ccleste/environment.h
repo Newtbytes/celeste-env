@@ -34,4 +34,4 @@ PlayerState get_player_state(void);
 
 unsigned char get_room(void);
 
-void get_screen(int input_screen[SCREEN_SIZE][SCREEN_SIZE]);
+void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3]);

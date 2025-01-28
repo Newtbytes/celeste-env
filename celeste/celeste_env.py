@@ -128,15 +128,7 @@ class CelesteEnv(gym.Env):
 
     def get_screen(self):
         if self.screen is None:
-            screen = self.celeste.get_screen()
-
-            rgb_screen = np.zeros((128, 128, 3), dtype=np.uint8)
-
-            rgb_screen[:, :, 0] = (screen >> 16) & 0xFF  # Red
-            rgb_screen[:, :, 1] = (screen >> 8) & 0xFF   # Green
-            rgb_screen[:, :, 2] = screen & 0xFF          # Blue
-
-            self.screen = rgb_screen
+            self.screen = self.celeste.get_screen()
 
         return self.screen
 

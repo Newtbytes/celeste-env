@@ -37,20 +37,21 @@ cdef extern from "environment.h":
 
     unsigned char get_room()
 
-    void get_screen(int input_screen[SCREEN_SIZE][SCREEN_SIZE])
+    void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3])
 
 
 cdef np.ndarray get_screen_as_np():
-    cdef int screen[SCREEN_SIZE][SCREEN_SIZE]
+    cdef unsigned char screen[SCREEN_SIZE][SCREEN_SIZE][3]
     get_screen(screen)
 
-    screen_np = np.empty((SCREEN_SIZE, SCREEN_SIZE), dtype=np.int32)
-    cdef int [:,:] screen_np_view = screen_np
+    screen_np = np.empty((SCREEN_SIZE, SCREEN_SIZE, 3), dtype=np.uint8)
+    cdef unsigned char [:,:,:] screen_np_view = screen_np
 
-    cdef int i, j
+    cdef int i, j, k
     for i in range(SCREEN_SIZE):
         for j in range(SCREEN_SIZE):
-            screen_np_view[i, j] = screen[i][j]
+            for k in range(3):
+                screen_np_view[i, j, k] = screen[i][j][k]
 
     return screen_np
 

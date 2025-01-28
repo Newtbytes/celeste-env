@@ -19,7 +19,7 @@ typedef struct Rect {
 } Rect;
 
 
-int screen[SCREEN_SIZE][SCREEN_SIZE];
+unsigned char screen[SCREEN_SIZE][SCREEN_SIZE][3];
 
 
 static const int palette[16] = {
@@ -51,8 +51,15 @@ static inline void clamp(int* x) {
 	}
 }
 
-static inline int getcolor(char idx) {
-	return palette[idx%16];
+constexpr void getcolor(char idx, unsigned char* r, unsigned char* g, unsigned char* b) {
+	int col = palette[idx%16];
+	*r = (col >> 16) & 0xFF;
+	*g = (col >> 8) & 0xFF;
+	*b = col & 0xFF;
+}
+
+static inline void setpixel(char col, int x, int y) {
+	getcolor(col, &screen[y][x][0], &screen[y][x][1], &screen[y][x][2]);
 }
 
 static inline void rectfill(Rect* rect, int col) {
@@ -66,7 +73,7 @@ static inline void rectfill(Rect* rect, int col) {
 
 	for (int x = rect->x; x < end_x; x++) {
 		for (int y = rect->y; y < end_y; y++) {
-			screen[y][x] = getcolor(col);
+			setpixel(col, x, y);
 		}
 	}
 }
@@ -276,10 +283,12 @@ unsigned char get_room(void) {
 	return Celeste_get_room();
 }
 
-void get_screen(int input_screen[SCREEN_SIZE][SCREEN_SIZE]) {
-    for (int x = 0; x < SCREEN_SIZE; x++) {
-        for (int y = 0; y < SCREEN_SIZE; y++) {
-            input_screen[x][y] = screen[x][y];
-        }
-    }
+void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3]) {
+	for (int i = 0; i < SCREEN_SIZE; i++) {
+		for (int j = 0; j < SCREEN_SIZE; j++) {
+			for (int k = 0; k < 3; k++) {
+				input_screen[i][j][k] = screen[i][j][k];
+			}
+		}
+	}
 }
