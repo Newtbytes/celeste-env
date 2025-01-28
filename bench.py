@@ -6,7 +6,7 @@ from gymnasium.utils.performance import benchmark_step
 BENCH_DURATION = 30
 SEED = 42
 
-env = CelesteEnv()
+env = CelesteEnv(render_mode=None, obs_type="ram")
 
 
 def bench_env():

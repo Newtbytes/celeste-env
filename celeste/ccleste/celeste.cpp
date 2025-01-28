@@ -706,7 +706,7 @@ static void PLAYER_draw(OBJ* this) {
 	}
    
 	set_hair_color(this->djump);
-	draw_hair(this,this->flip_x ? -1 : 1);
+	//draw_hair(this,this->flip_x ? -1 : 1);
 	P8spr(this->spr,this->x,this->y,1,1,this->flip_x,this->flip_y);
 	unset_hair_color();
 }
@@ -729,18 +729,18 @@ static void set_hair_color(int djump) {
 }
 
 static void draw_hair(OBJ* obj, int facing) {
-	decimal last_x=obj->x+4-facing*2;
-	decimal last_y=obj->y+(P8btn(k_down) ? 4 : 3);
-	HAIR* h;
-	int i = 0;
-	do {
-		h = &obj->hair[i++];
-		h->x+=(last_x-h->x)/1.5;
-		h->y+=(last_y+0.5-h->y)/1.5;
-		P8circfill(h->x,h->y,h->size,8);
-		last_x=h->x;
-		last_y=h->y;
-	} while (!h->isLast);
+	// decimal last_x=obj->x+4-facing*2;
+	// decimal last_y=obj->y+(P8btn(k_down) ? 4 : 3);
+	// HAIR* h;
+	// int i = 0;
+	// do {
+	// 	h = &obj->hair[i++];
+	// 	h->x+=(last_x-h->x)/1.5;
+	// 	h->y+=(last_y+0.5-h->y)/1.5;
+	// 	P8circfill(h->x,h->y,h->size,8);
+	// 	last_x=h->x;
+	// 	last_y=h->y;
+	// } while (!h->isLast);
 }
 
 static void unset_hair_color() {
@@ -796,7 +796,7 @@ static void PLAYER_SPAWN_update(OBJ* this) {
 }
 static void PLAYER_SPAWN_draw (OBJ* this) {
 	set_hair_color(max_djump);
-	draw_hair(this,1);
+	//draw_hair(this,1);
 	P8spr(this->spr,this->x,this->y,1,1,this->flip_x,this->flip_y);
 	unset_hair_color();
 }
@@ -1624,20 +1624,20 @@ void Celeste_P8_draw() {
 	P8rectfill(0,0,128,128,bg_col);
 
 	// clouds
-	if (!is_title()) {
-		for (int i = 0; i <= 16; i++) {
-			CLOUD* c = &clouds[i];
-			c->x += c->spd;
-			P8rectfill(c->x,c->y,c->x+c->w,c->y+4+(1-c->w/64.0)*12,new_bg ? 14 : 1);
-			if (c->x > 128) {
-				c->x = -c->w;
-				c->y = P8rnd(128-8);
-			}
-		}
-	}
+	// if (!is_title()) {
+	// 	for (int i = 0; i <= 16; i++) {
+	// 		CLOUD* c = &clouds[i];
+	// 		c->x += c->spd;
+	// 		P8rectfill(c->x,c->y,c->x+c->w,c->y+4+(1-c->w/64.0)*12,new_bg ? 14 : 1);
+	// 		if (c->x > 128) {
+	// 			c->x = -c->w;
+	// 			c->y = P8rnd(128-8);
+	// 		}
+	// 	}
+	// }
 
-	// draw bg terrain
-	P8map(room.x * 16,room.y * 16,0,0,16,16,4);
+	// // draw bg terrain
+	// P8map(room.x * 16,room.y * 16,0,0,16,16,4);
 
 	// platforms/big chest
 	for (int i = 0; i < MAX_OBJECTS; i++) {
@@ -1673,7 +1673,7 @@ void Celeste_P8_draw() {
 		p->x += p->spd;
 		p->y += P8sin(p->off);
 		p->off+= P8min(0.05,p->spd/32);
-		P8rectfill(p->x,p->y,p->x+p->s,p->y+p->s,p->c);
+		//P8rectfill(p->x,p->y,p->x+p->s,p->y+p->s,p->c);
 		if (p->x>128+4) { 
 			p->x=-4;
 			p->y=P8rnd(128);
@@ -1689,17 +1689,17 @@ void Celeste_P8_draw() {
 			p->y += p->spd2.y;
 			p->t -=1;
 			if (p->t <= 0) { p->active = false; }
-			P8rectfill(p->x-p->t/5,p->y-p->t/5,p->x+p->t/5,p->y+p->t/5,14+P8modulo(p->t,2));
+			//P8rectfill(p->x-p->t/5,p->y-p->t/5,p->x+p->t/5,p->y+p->t/5,14+P8modulo(p->t,2));
 		}
 
 		p++;
 	}
    
-	// draw outside of the screen for screenshake
-	P8rectfill(-5,-5,-1,133,0);
-	P8rectfill(-5,-5,133,-1,0);
-	P8rectfill(-5,128,133,133,0);
-	P8rectfill(128,-5,133,133,0);
+	// // draw outside of the screen for screenshake
+	// P8rectfill(-5,-5,-1,133,0);
+	// P8rectfill(-5,-5,133,-1,0);
+	// P8rectfill(-5,128,133,133,0);
+	// P8rectfill(128,-5,133,133,0);
    
 	// credits
 	if (is_title()) {

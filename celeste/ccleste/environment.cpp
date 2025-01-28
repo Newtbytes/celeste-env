@@ -194,11 +194,7 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 void init(void) {
     Celeste_P8_set_call_func(pico8emu);
 
-	for (int x = 0; x < SCREEN_SIZE; x++) {
-		for (int y = 0; y < SCREEN_SIZE; y++) {
-			screen[x][y] = 0;
-		}
-	}
+	memset(screen, 0, sizeof(screen));
 
     Celeste_P8_set_rndseed(8);
     Celeste_P8_init();
@@ -213,6 +209,8 @@ void init(void) {
 }
 
 void step(Uint16 action) {
+	//p8_rectfill(0, 0, 128, 128, 0);
+
     buttons_state = action;
     Celeste_P8_update();
 	Celeste_P8_draw();
