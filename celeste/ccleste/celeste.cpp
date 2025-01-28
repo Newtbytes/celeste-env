@@ -6,6 +6,7 @@
 * so _init becomes Celeste_P8_init && music becomes P8music, etc 
 */
 
+#include <cstddef>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -239,9 +240,9 @@ VECI room_from_level_index(int level_index) {
 /////////////////
 
 static void PRELUDE() {
-	//top-level init code has been moved into functions that are called here
-	PRELUDE_initclouds();
-	PRELUDE_initparticles();
+	// //top-level init code has been moved into functions that are called here
+	// PRELUDE_initclouds();
+	// PRELUDE_initparticles();
 }
 
 void Celeste_P8_init() { //identifiers beginning with underscores are reserved in C
@@ -1346,6 +1347,10 @@ static void ROOM_TITLE_draw(OBJ* this) {
 //////////////////////-
 
 static OBJ* init_object(OBJTYPE type, decimal x, decimal y) {
+	if (type == OBJ_SMOKE) {
+		return NULL;
+	}
+
 	//if (type.if_not_fruit!=NULL && got_fruit[1+level_index()]) {
 	if (OBJTYPE_prop[type].if_not_fruit && got_fruit[level_index()]) {
 		return NULL;
@@ -1384,6 +1389,7 @@ static OBJ* init_object(OBJTYPE type, decimal x, decimal y) {
 	if (OBJ_PROP(obj).init!=NULL) {
 		OBJ_PROP(obj).init(obj);
 	}
+
 	return obj;
 }
 
@@ -1487,9 +1493,9 @@ static void load_room(int x, int y) {
 
 	//printf("load_room(): deleted %i and loaded %i objects\n", oldcount, newcount);
    
-	if (!is_title()) {
-		init_object(OBJ_ROOM_TITLE,0,0);
-	}
+	// if (!is_title()) {
+	// 	init_object(OBJ_ROOM_TITLE,0,0);
+	// }
 }
 
 // update function //
@@ -1667,33 +1673,33 @@ void Celeste_P8_draw() {
 	// draw fg terrain
 	P8map(room.x * 16,room.y * 16,0,0,16,16,8);
    
-	// particles
-	for (int i = 0; i <= 24; i++) {
-		PARTICLE* p = &particles[i];
-		p->x += p->spd;
-		p->y += P8sin(p->off);
-		p->off+= P8min(0.05,p->spd/32);
-		//P8rectfill(p->x,p->y,p->x+p->s,p->y+p->s,p->c);
-		if (p->x>128+4) { 
-			p->x=-4;
-			p->y=P8rnd(128);
-		}
-		p++;
-	}
+	// // particles
+	// for (int i = 0; i <= 24; i++) {
+	// 	PARTICLE* p = &particles[i];
+	// 	p->x += p->spd;
+	// 	p->y += P8sin(p->off);
+	// 	p->off+= P8min(0.05,p->spd/32);
+	// 	//P8rectfill(p->x,p->y,p->x+p->s,p->y+p->s,p->c);
+	// 	if (p->x>128+4) { 
+	// 		p->x=-4;
+	// 		p->y=P8rnd(128);
+	// 	}
+	// 	p++;
+	// }
    
-	// dead particles
-	for (int i = 0; i <= 7; i++) {
-		PARTICLE* p = &dead_particles[i];
-		if (p->active) {
-			p->x += p->spd2.x;
-			p->y += p->spd2.y;
-			p->t -=1;
-			if (p->t <= 0) { p->active = false; }
-			//P8rectfill(p->x-p->t/5,p->y-p->t/5,p->x+p->t/5,p->y+p->t/5,14+P8modulo(p->t,2));
-		}
+	// // dead particles
+	// for (int i = 0; i <= 7; i++) {
+	// 	PARTICLE* p = &dead_particles[i];
+	// 	if (p->active) {
+	// 		p->x += p->spd2.x;
+	// 		p->y += p->spd2.y;
+	// 		p->t -=1;
+	// 		if (p->t <= 0) { p->active = false; }
+	// 		//P8rectfill(p->x-p->t/5,p->y-p->t/5,p->x+p->t/5,p->y+p->t/5,14+P8modulo(p->t,2));
+	// 	}
 
-		p++;
-	}
+	// 	p++;
+	// }
    
 	// // draw outside of the screen for screenshake
 	// P8rectfill(-5,-5,-1,133,0);
