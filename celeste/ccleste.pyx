@@ -1,3 +1,5 @@
+from libcpp cimport bool
+
 cimport numpy as np
 import numpy as np
 
@@ -38,6 +40,8 @@ cdef extern from "environment.h":
     unsigned char get_room()
 
     void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3])
+
+    void set_render_enabled(bool enabled)
 
 
 cdef np.ndarray get_screen_as_np():
@@ -115,3 +119,6 @@ cdef class Celeste:
 
     def get_screen(self) -> np.ndarray:
         return get_screen_as_np()
+
+    def set_render_enabled(self, bool enabled):
+        set_render_enabled(enabled)

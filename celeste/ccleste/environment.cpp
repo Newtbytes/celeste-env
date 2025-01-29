@@ -20,6 +20,7 @@ typedef struct Rect {
 
 
 unsigned char screen[SCREEN_SIZE][SCREEN_SIZE][3];
+bool handle_render_cb = true;
 
 
 static const int palette[16] = {
@@ -94,6 +95,9 @@ static inline int gettileflag(int tile, int flag) {
 // TODO: implement image observations
 // write drawing operations to buffer and convert buffer to numpy array in ccleste.pyx
 int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
+	if (!handle_render_cb && (call & RENDER_CALLS != 0))
+		return 0;
+
 	static int camera_x = 0, camera_y = 0;
 	camera_x = camera_y = 0;
 
@@ -113,6 +117,20 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 			assert(b >= 0 && b <= 5); 
 			RET_BOOL(buttons_state & (1 << b));
 		} break;
+		case CELESTE_P8_MGET: { //mget(tx,ty)
+			int tx = INT_ARG();
+			int ty = INT_ARG();
+
+			RET_INT(tilemap_data[tx+ty*128]);
+		} break;
+		case CELESTE_P8_FGET: { //fget(tile,flag)
+			int tile = INT_ARG();
+			int flag = INT_ARG();
+
+			RET_INT(gettileflag(tile, flag));
+		} break;
+
+		// rendering callbacks
 		case CELESTE_P8_SPR: { //spr(sprite,x,y,cols,rows,flipx,flipy)
 			int sprite = INT_ARG();
 			int x = INT_ARG();
@@ -144,19 +162,6 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 
 			p8_rectfill(x0,y0,x1,y1,col);
 		} break;
-		case CELESTE_P8_MGET: { //mget(tx,ty)
-			int tx = INT_ARG();
-			int ty = INT_ARG();
-
-			RET_INT(tilemap_data[tx+ty*128]);
-		} break;
-		case CELESTE_P8_FGET: { //fget(tile,flag)
-			int tile = INT_ARG();
-			int flag = INT_ARG();
-
-			RET_INT(gettileflag(tile, flag));
-		} break;
-
 		case CELESTE_P8_MAP: { //map(mx,my,tx,ty,mw,mh,mask)
 			int mx = INT_ARG(), my = INT_ARG();
 			int tx = INT_ARG(), ty = INT_ARG();
@@ -219,8 +224,6 @@ void init(void) {
 }
 
 void step(Uint16 action) {
-	//p8_rectfill(0, 0, 128, 128, 0);
-
     buttons_state = action;
     Celeste_P8_update();
 	Celeste_P8_draw();
@@ -291,4 +294,9 @@ void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3]) {
 			}
 		}
 	}
+}
+
+void set_render_enabled(bool enabled) {
+	Celeste_set_render_enabled(enabled);
+	handle_render_cb = enabled;
 }

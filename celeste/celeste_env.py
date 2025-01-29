@@ -51,6 +51,8 @@ class CelesteEnv(gym.Env):
 
         self.action_space = gym.spaces.Discrete(uint_limit(6) + 1)
 
+        self.celeste.set_render_enabled(self.obs_type == "rgb_array" or self.render_mode == "rgb_array")
+
     def _obs(self):
         if self.obs_type == "rgb_array":
             return self.get_screen()

@@ -52,7 +52,7 @@ void Celeste_P8_set_rndseed(unsigned seed) {
 
 ///////PICO-8 functions
 static inline void P8music(int track, int fade, int mask) {
-	Celeste_P8_call(CELESTE_P8_MUSIC, track, fade, mask);
+	//Celeste_P8_call(CELESTE_P8_MUSIC, track, fade, mask);
 }
 static inline void P8spr(int sprite, int x, int y, int cols, int rows, bool flipx, bool flipy) {
 	Celeste_P8_call(CELESTE_P8_SPR, sprite, x, y, cols, rows, flipx, flipy);
@@ -61,25 +61,25 @@ static inline bool P8btn(int b) {
 	return Celeste_P8_call(CELESTE_P8_BTN, b);
 }
 static inline void P8sfx(int id) {
-	Celeste_P8_call(CELESTE_P8_SFX, id);
+	//Celeste_P8_call(CELESTE_P8_SFX, id);
 }
 static inline void P8pal(int a, int b) {
-	Celeste_P8_call(CELESTE_P8_PAL, a, b);
+	//Celeste_P8_call(CELESTE_P8_PAL, a, b);
 }
 static inline void P8pal_reset() {
-	Celeste_P8_call(CELESTE_P8_PAL_RESET);
+	//Celeste_P8_call(CELESTE_P8_PAL_RESET);
 }
 static inline void P8circfill(int x, int y, int r, int c) {
-	Celeste_P8_call(CELESTE_P8_CIRCFILL, x,y,r,c);
+	//Celeste_P8_call(CELESTE_P8_CIRCFILL, x,y,r,c);
 }
 static inline void P8rectfill(int x, int y, int x2, int y2, int c) {
 	Celeste_P8_call(CELESTE_P8_RECTFILL, x,y,x2,y2,c);
 }
 static inline void P8print(const char* str, int x, int y, int c) {
-	Celeste_P8_call(CELESTE_P8_PRINT, str,x,y,c);
+	//Celeste_P8_call(CELESTE_P8_PRINT, str,x,y,c);
 }
 static inline void P8line(int x, int y, int x2, int y2, int c) {
-	Celeste_P8_call(CELESTE_P8_LINE, x,y,x2,y2,c);
+	//Celeste_P8_call(CELESTE_P8_LINE, x,y,x2,y2,c);
 }
 static inline int P8mget(int x, int y) {
 	return Celeste_P8_call(CELESTE_P8_MGET, x,y);
@@ -88,7 +88,7 @@ static inline bool P8fget(int t, int f) {
 	return Celeste_P8_call(CELESTE_P8_FGET, t,f);
 }
 static inline void P8camera(int x, int y) {
-	Celeste_P8_call(CELESTE_P8_CAMERA, x, y);
+	//Celeste_P8_call(CELESTE_P8_CAMERA, x, y);
 }
 static inline void P8map(int mx, int my, int tx, int ty, int mw, int mh, int mask) {
 	Celeste_P8_call(CELESTE_P8_MAP, mx, my, tx, ty, mw, mh, mask);
@@ -202,6 +202,7 @@ enum {
 
 OBJ* player_state;
 static int fruits;
+static bool rendering = true;
 
 
 static int level_index();
@@ -227,6 +228,10 @@ int Celeste_get_deaths() {
 
 int Celeste_get_fruits() {
 	return fruits;
+}
+
+void Celeste_set_render_enabled(bool enabled) {
+	rendering = enabled;
 }
 
 VECI room_from_level_index(int level_index) {
@@ -705,7 +710,9 @@ static void PLAYER_draw(OBJ* this) {
 		this->x=clamp(this->x,-1,121);
 		this->spd.x=0;
 	}
-   
+
+	if (!rendering) { return; }
+
 	set_hair_color(this->djump);
 	//draw_hair(this,this->flip_x ? -1 : 1);
 	P8spr(this->spr,this->x,this->y,1,1,this->flip_x,this->flip_y);
@@ -726,7 +733,7 @@ void create_hair(OBJ* obj) {
 }
 
 static void set_hair_color(int djump) {
-	P8pal(8,(djump==1 ? 8 : (djump==2 ?(7+P8flr(((int)(((decimal)frames)/3.0))%2)*4) : 12)));
+	//P8pal(8,(djump==1 ? 8 : (djump==2 ?(7+P8flr(((int)(((decimal)frames)/3.0))%2)*4) : 12)));
 }
 
 static void draw_hair(OBJ* obj, int facing) {
@@ -796,6 +803,8 @@ static void PLAYER_SPAWN_update(OBJ* this) {
 	}
 }
 static void PLAYER_SPAWN_draw (OBJ* this) {
+	if ( !rendering ) { return; }
+
 	set_hair_color(max_djump);
 	//draw_hair(this,1);
 	P8spr(this->spr,this->x,this->y,1,1,this->flip_x,this->flip_y);
@@ -886,6 +895,8 @@ static void BALLOON_update(OBJ* this) {
 	}
 }
 static void BALLOON_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	if (this->spr==22) {
 		P8spr(13+(int)(this->offset*8)%3,this->x,this->y+6,   1,1,false,false);
 		P8spr(this->spr,this->x,this->y,   1,1,false,false);
@@ -924,6 +935,8 @@ static void FALL_FLOOR_update(OBJ* this) {
 	}
 }
 static void FALL_FLOOR_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	if (this->state!=2) {
 		if (this->state!=1) {
 			P8spr(23,this->x,this->y,   1,1,false,false);
@@ -1034,6 +1047,8 @@ static void FLY_FRUIT_update(OBJ* this) {
 	if (do_destroy_object) destroy_object(this);
 }
 static void FLY_FRUIT_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	decimal off=0;
 	if (!this->fly) {
 		decimal dir=P8sin(this->step);
@@ -1093,6 +1108,8 @@ static void FAKE_WALL_update(OBJ* this) {
 	this->hitbox=(HITBOX){.x=0,.y=0,.w=16,.h=16};
 }
 static void FAKE_WALL_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	P8spr(64,this->x,this->y,	1,1,false,false);
 	P8spr(65,this->x+8,this->y,	1,1,false,false);
 	P8spr(80,this->x,this->y+8,	1,1,false,false);
@@ -1158,6 +1175,8 @@ static void PLATFORM_update(OBJ* this) {
 	this->last=this->x;
 }
 static void PLATFORM_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	P8spr(11,this->x,this->y-1,	 1,1,false,false);
 	P8spr(12,this->x+8,this->y-1,   1,1,false,false);
 }
@@ -1166,6 +1185,8 @@ static void PLATFORM_draw(OBJ* this) {
 	//tile=86,
 	//last=0,
 static void MESSAGE_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	this->text="-- celeste mountain --#this memorial to those# perished on the climb";
 	if (OBJ_check(this, OBJ_PLAYER,4,0)) {
 		if (this->index<strlen(this->text)) {
@@ -1289,6 +1310,8 @@ static void FLAG_init(OBJ* this) {
 	}
 }
 static void FLAG_draw(OBJ* this) {
+	if (!rendering) { return; }
+
 	this->spr=118+P8modulo(((decimal)frames/5.f), 3);
 	P8spr(this->spr,this->x,this->y, 1,1,false,false);
 	if (this->show) {
@@ -1321,7 +1344,7 @@ static void ROOM_TITLE_draw(OBJ* this) {
 	this->delay-=1;
 	if (this->delay<-30) {
 		destroy_object(this);
-	} else if (this->delay<0) {
+	} else if (this->delay<0 && rendering) {
 		P8rectfill(24,58,104,70,0);
 		//rect(26,64-10,102,64+10,7)
 		//print("//-",31,64-2,13)
@@ -1592,6 +1615,8 @@ void Celeste_P8_update() {
 //////////////////////-
 void Celeste_P8_draw() {
 	if (freeze>0) { return; }
+	
+	if (rendering){
    
 	// reset all palette values
 	P8pal_reset();
@@ -1644,6 +1669,7 @@ void Celeste_P8_draw() {
 
 	// // draw bg terrain
 	// P8map(room.x * 16,room.y * 16,0,0,16,16,4);
+	}
 
 	// platforms/big chest
 	for (int i = 0; i < MAX_OBJECTS; i++) {
@@ -1653,9 +1679,11 @@ void Celeste_P8_draw() {
 		}
 	}
 
+	if (rendering){
 	// draw terrain
 	int off=is_title() ? -4 : 0;
 	P8map(room.x*16,room.y * 16,off,0,16,16,2);
+	}
    
 	// draw objects
 	for (int i = 0; i < MAX_OBJECTS; i++) {
@@ -1669,7 +1697,8 @@ void Celeste_P8_draw() {
 		//LEMON: draw_object() could have deleted obj, and something could have been moved in its place, so check for that in order not to skip drawing an object
 		if (this_id != o->id) goto redo_draw;
 	}
-   
+
+	if (rendering){
 	// draw fg terrain
 	P8map(room.x * 16,room.y * 16,0,0,16,16,8);
    
@@ -1728,18 +1757,21 @@ void Celeste_P8_draw() {
 			P8rectfill(128-diff,0,128,128,0);
 		}
 	}
+	}
 }
 
 static void draw_object(OBJ* obj) {
 	if (OBJ_PROP(obj).draw !=NULL) {
 		OBJ_PROP(obj).draw(obj);
-	} else if (obj->spr > 0) {
+	} else if (obj->spr > 0 && rendering) {
 		P8spr(obj->spr,obj->x,obj->y,1,1,obj->flip_x,obj->flip_y);
 	}
 	//if (floorf(obj->spr) != obj->spr) printf("?%g %s\n", obj->spr, OBJ_PROP(obj).nam);
 }
 
 static void draw_time(decimal x, decimal y) {
+	if (!rendering) { return; }
+
 	int s=seconds;
 	int m=minutes%60;
 	int h=minutes/60;

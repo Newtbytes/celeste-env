@@ -7,6 +7,7 @@ typedef unsigned int Uint32;
 
 
 #define SCREEN_SIZE 128
+#define RENDER_CALLS CELESTE_P8_SPR | CELESTE_P8_RECTFILL | CELESTE_P8_MAP
 
 
 void init(void);
@@ -35,3 +36,5 @@ PlayerState get_player_state(void);
 unsigned char get_room(void);
 
 void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3]);
+
+void set_render_enabled(bool enabled);
