@@ -95,9 +95,6 @@ static inline int gettileflag(int tile, int flag) {
 // TODO: implement image observations
 // write drawing operations to buffer and convert buffer to numpy array in ccleste.pyx
 int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
-	if (!handle_render_cb && (call & RENDER_CALLS != 0))
-		return 0;
-
 	static int camera_x = 0, camera_y = 0;
 	camera_x = camera_y = 0;
 
@@ -132,6 +129,9 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 
 		// rendering callbacks
 		case CELESTE_P8_SPR: { //spr(sprite,x,y,cols,rows,flipx,flipy)
+			if (!handle_render_cb)
+				goto end;
+
 			int sprite = INT_ARG();
 			int x = INT_ARG();
 			int y = INT_ARG();
@@ -154,6 +154,9 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 			}
 		} break;
 		case CELESTE_P8_RECTFILL: { //rectfill(x0,y0,x1,y1,col)
+			if (!handle_render_cb)
+				goto end;
+
 			int x0 = INT_ARG() - camera_x;
 			int y0 = INT_ARG() - camera_y;
 			int x1 = INT_ARG() - camera_x;
@@ -163,6 +166,9 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 			p8_rectfill(x0,y0,x1,y1,col);
 		} break;
 		case CELESTE_P8_MAP: { //map(mx,my,tx,ty,mw,mh,mask)
+			if (!handle_render_cb)
+				goto end;
+
 			int mx = INT_ARG(), my = INT_ARG();
 			int tx = INT_ARG(), ty = INT_ARG();
 			int mw = INT_ARG(), mh = INT_ARG();
