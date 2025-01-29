@@ -73,14 +73,6 @@ class CelesteEnv(gym.Env):
 
         return reward
 
-    def _done(self, info, room):
-        done = room == 30
-
-        if self.terminate_on_death:
-            done = info["deaths"] > 0
-
-        return done
-
     def reset(self, seed=None, **kwargs):
         super().reset(seed=seed)
 
@@ -114,13 +106,12 @@ class CelesteEnv(gym.Env):
 
 
         reward = self._reward(info, room)
-        terminated = self._done(info, room)
 
 
         self._last_room = room
         self._last_info = info
 
-        return self._obs(), reward, terminated, False, info
+        return self._obs(), reward, room >= 30, info["deaths"] > 0, info
 
     def save(self):
         return self.save_state[:]
