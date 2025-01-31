@@ -1,13 +1,10 @@
 #include <stdlib.h>
+#include "pico8.h"
 #include "celeste.h"
 
 
 typedef unsigned short Uint16;
 typedef unsigned int Uint32;
-
-
-#define SCREEN_SIZE 128
-#define RENDER_CALLS CELESTE_P8_SPR | CELESTE_P8_RECTFILL | CELESTE_P8_MAP
 
 
 void init(void);

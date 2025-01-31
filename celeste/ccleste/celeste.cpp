@@ -76,7 +76,7 @@ static inline void P8rectfill(int x, int y, int x2, int y2, int c) {
 	Celeste_P8_call(CELESTE_P8_RECTFILL, x,y,x2,y2,c);
 }
 static inline void P8print(const char* str, int x, int y, int c) {
-	//Celeste_P8_call(CELESTE_P8_PRINT, str,x,y,c);
+	Celeste_P8_call(CELESTE_P8_PRINT, str,x,y,c);
 }
 static inline void P8line(int x, int y, int x2, int y2, int c) {
 	//Celeste_P8_call(CELESTE_P8_LINE, x,y,x2,y2,c);
@@ -528,7 +528,7 @@ static void PLAYER_update(OBJ* this) {
    
 	// smoke particles
 	if (on_ground && !this->was_on_ground) {
-		init_object(OBJ_SMOKE,this->x,this->y+4);
+		//init_object(OBJ_SMOKE,this->x,this->y+4);
 	}
 
 	bool jump = P8btn(k_jump) && !this->p_jump;
@@ -554,7 +554,7 @@ static void PLAYER_update(OBJ* this) {
 
 	this->dash_effect_time -=1;
 	if (this->dash_time > 0) {
-		init_object(OBJ_SMOKE, this->x,this->y);
+		//init_object(OBJ_SMOKE, this->x,this->y);
 		this->dash_time-=1;
 		this->spd.x=appr(this->spd.x,this->dash_target.x,this->dash_accel.x);
 		this->spd.y=appr(this->spd.y,this->dash_target.y,this->dash_accel.y); 
@@ -597,7 +597,7 @@ static void PLAYER_update(OBJ* this) {
 		if (input!=0 && OBJ_is_solid(this, input,0) && !OBJ_is_ice(this, input,0)) {
 			maxfall=0.4;
 			if (P8rnd(10)<2) {
-				init_object(OBJ_SMOKE,this->x+input*6,this->y);
+				//init_object(OBJ_SMOKE,this->x+input*6,this->y);
 			}
 		}
 
@@ -613,7 +613,7 @@ static void PLAYER_update(OBJ* this) {
 				this->jbuffer=0;
 				this->grace=0;
 				this->spd.y=-2;
-				init_object(OBJ_SMOKE,this->x,this->y+4);
+				//init_object(OBJ_SMOKE,this->x,this->y+4);
 			} else {
 				// wall jump
 				int wall_dir=(OBJ_is_solid(this, -3,0) ? -1 : (OBJ_is_solid(this, 3,0) ? 1 : 0));
@@ -623,7 +623,7 @@ static void PLAYER_update(OBJ* this) {
 					this->spd.y=-2;
 					this->spd.x=-wall_dir*(maxrun+1);
 					if (!OBJ_is_ice(this, wall_dir*3,0)) {
-						init_object(OBJ_SMOKE,this->x+wall_dir*6,this->y);
+						//init_object(OBJ_SMOKE,this->x+wall_dir*6,this->y);
 					}
 				}
 			}
@@ -634,7 +634,7 @@ static void PLAYER_update(OBJ* this) {
 		decimal d_half=d_full*0.70710678118;
    
 		if (this->djump>0 && dash) {
-			init_object(OBJ_SMOKE,this->x,this->y);
+			//init_object(OBJ_SMOKE,this->x,this->y);
 			this->djump-=1;
 			this->dash_time=4;
 			has_dashed=true;
@@ -676,7 +676,7 @@ static void PLAYER_update(OBJ* this) {
 			}
 		} else if (dash && this->djump<=0) {
 			psfx(9);
-			init_object(OBJ_SMOKE,this->x,this->y);
+			//init_object(OBJ_SMOKE,this->x,this->y);
 		}
 	}
    
@@ -788,7 +788,7 @@ static void PLAYER_SPAWN_update(OBJ* this) {
 			this->state=2;
 			this->delay=5;
 			shake=5;
-			init_object(OBJ_SMOKE,this->x,this->y+4);
+			//init_object(OBJ_SMOKE,this->x,this->y+4);
 			P8sfx(5);
 		}
 	// landing
@@ -832,7 +832,7 @@ static void SPRING_update(OBJ* this) {
 			hit->spd.y=-3;
 			hit->djump=max_djump;
 			this->delay=10;
-			init_object(OBJ_SMOKE,this->x,this->y);
+			//init_object(OBJ_SMOKE,this->x,this->y);
 			 
 			// breakable below us
 			OBJ* below=OBJ_collide(this, OBJ_FALL_FLOOR,0,1);
@@ -881,7 +881,7 @@ static void BALLOON_update(OBJ* this) {
 		OBJ* hit = OBJ_collide(this, OBJ_PLAYER, 0,0);
 		if (hit != NULL && hit->djump<max_djump) {
 			psfx(6);
-			init_object(OBJ_SMOKE,this->x,this->y);
+			//init_object(OBJ_SMOKE,this->x,this->y);
 			hit->djump=max_djump;
 			this->spr=0;
 			this->timer=60;
@@ -890,7 +890,7 @@ static void BALLOON_update(OBJ* this) {
 		this->timer-=1;
 	} else { 
 		psfx(7);
-		init_object(OBJ_SMOKE,this->x,this->y);
+		//init_object(OBJ_SMOKE,this->x,this->y);
 		this->spr=22;
 	}
 }
@@ -930,7 +930,7 @@ static void FALL_FLOOR_update(OBJ* this) {
 			psfx(7);
 			this->state=0;
 			this->collideable=true;
-			init_object(OBJ_SMOKE,this->x,this->y);
+			//init_object(OBJ_SMOKE,this->x,this->y);
 		}
 	}
 }
@@ -951,7 +951,7 @@ static void break_fall_floor(OBJ* obj) {
 		psfx(15);
 		obj->state=1;
 		obj->delay=15;//how long until it falls
-		init_object(OBJ_SMOKE,obj->x,obj->y);
+		//init_object(OBJ_SMOKE,obj->x,obj->y);
 		OBJ* hit=OBJ_collide(obj, OBJ_SPRING,0,-1);
 		if (hit != NULL) {
 			break_spring(hit);
@@ -1097,10 +1097,10 @@ static void FAKE_WALL_update(OBJ* this) {
 		sfx_timer=20;
 		P8sfx(16);
 		//destroy_object(this);
-		init_object(OBJ_SMOKE,this->x,this->y);
-		init_object(OBJ_SMOKE,this->x+8,this->y);
-		init_object(OBJ_SMOKE,this->x,this->y+8);
-		init_object(OBJ_SMOKE,this->x+8,this->y+8);
+		// init_object(OBJ_SMOKE,this->x,this->y);
+		// init_object(OBJ_SMOKE,this->x+8,this->y);
+		// init_object(OBJ_SMOKE,this->x,this->y+8);
+		// init_object(OBJ_SMOKE,this->x+8,this->y+8);
 		init_object(OBJ_FRUIT,this->x+4,this->y+4);
 		destroy_object(this); //LEMON: moved here. see PLAYER_update. also returning to avoid modifying removed object
 		return;
@@ -1232,8 +1232,8 @@ static void BIG_CHEST_draw(OBJ* this) {
 			hit->spd.x=0;
 			hit->spd.y=0;
 			this->state=1;
-			init_object(OBJ_SMOKE,this->x,this->y);
-			init_object(OBJ_SMOKE,this->x+8,this->y);
+			// init_object(OBJ_SMOKE,this->x,this->y);
+			// init_object(OBJ_SMOKE,this->x+8,this->y);
 			this->timer=60;
 			this->particle_count = 0;
 		}
@@ -1370,9 +1370,9 @@ static void ROOM_TITLE_draw(OBJ* this) {
 //////////////////////-
 
 static OBJ* init_object(OBJTYPE type, decimal x, decimal y) {
-	if (type == OBJ_SMOKE) {
-		return NULL;
-	}
+	// if (type == OBJ_SMOKE) {
+	// 	return NULL;
+	// }
 
 	//if (type.if_not_fruit!=NULL && got_fruit[1+level_index()]) {
 	if (OBJTYPE_prop[type].if_not_fruit && got_fruit[level_index()]) {
@@ -1516,9 +1516,9 @@ static void load_room(int x, int y) {
 
 	//printf("load_room(): deleted %i and loaded %i objects\n", oldcount, newcount);
    
-	// if (!is_title()) {
-	// 	init_object(OBJ_ROOM_TITLE,0,0);
-	// }
+	if (!is_title()) {
+		init_object(OBJ_ROOM_TITLE,0,0);
+	}
 }
 
 // update function //
@@ -1674,7 +1674,7 @@ void Celeste_P8_draw() {
 	// platforms/big chest
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		OBJ* o = &objects[i];
-		if (o->active && (o->type==OBJ_PLATFORM || o->type==OBJ_BIG_CHEST)) {
+		if (o->active && (o->type==OBJ_PLATFORM || (o->type==OBJ_BIG_CHEST && rendering))) {
 			draw_object(o);
 		}
 	}
@@ -1688,14 +1688,14 @@ void Celeste_P8_draw() {
 	// draw objects
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		OBJ* o = &objects[i];
-		redo_draw:;
+		//redo_draw:;
 		short this_id = o->id;
 		if (o->active && (o->type!=OBJ_PLATFORM && o->type!=OBJ_BIG_CHEST)) {
 			draw_object(o);
 		}
 		
-		//LEMON: draw_object() could have deleted obj, and something could have been moved in its place, so check for that in order not to skip drawing an object
-		if (this_id != o->id) goto redo_draw;
+		// //LEMON: draw_object() could have deleted obj, and something could have been moved in its place, so check for that in order not to skip drawing an object
+		// if (this_id != o->id) goto redo_draw;
 	}
 
 	if (rendering){

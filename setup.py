@@ -17,8 +17,13 @@ def get_extensions():
     return [
         Extension(
             "ccleste",
-            sources=["celeste/ccleste.pyx", "celeste/ccleste/environment.cpp", "celeste/ccleste/celeste.cpp"],
-            include_dirs=[".", "celeste/ccleste/", np.get_include()],
+            sources=[
+                "celeste/ccleste.pyx",
+                "celeste/ccleste/celeste.cpp",
+                "celeste/ccleste/pico8.cpp",
+                "celeste/ccleste/environment.cpp",
+            ],
+            include_dirs=[".", "celeste/ccleste/", "celeste/ccleste/data/", np.get_include()],
             define_macros=[("CELESTE_P8_FIXEDP", 1), ("CELESTE_P8_HACKED_BALLOONS", 1)],
             extra_compiler_args=["-O3", "-march=native", "-fPIC"],
             extra_linker_args=["-flto"],

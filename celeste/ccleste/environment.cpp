@@ -4,89 +4,16 @@
 #include <string.h>
 
 #include "celeste.h"
-#include "tilemap.h"
+#include "data/tilemap.h"
 #include "environment.h"
+#include "pico8.h"
 
 
 static Uint16 buttons_state = 0;
 
 
-typedef struct Rect {
-	int x;
-	int y;
-	int w;
-	int h;
-} Rect;
-
-
-unsigned char screen[SCREEN_SIZE][SCREEN_SIZE][3];
 bool handle_render_cb = true;
 
-
-static const int palette[16] = {
-    0x000000,
-    0x1D2B53,
-    0x7E2553,
-    0x008751,
-    0xAB5236,
-    0x5F574F,
-    0xC2C3C7,
-    0xFFF1E8,
-    0xFF004D,
-    0xFFA300,
-    0xFFEC27,
-    0x00E436,
-    0x29ADFF,
-    0x83769C,
-    0xFF77A8,
-    0xFFCCAA
-};
-
-
-static inline void clamp(int* x) {
-	if (*x > SCREEN_SIZE) {
-		*x = SCREEN_SIZE;
-	}
-	else if (*x < 0) {
-		*x = 0;
-	}
-}
-
-constexpr void getcolor(char idx, unsigned char* r, unsigned char* g, unsigned char* b) {
-	int col = palette[idx%16];
-	*r = (col >> 16) & 0xFF;
-	*g = (col >> 8) & 0xFF;
-	*b = col & 0xFF;
-}
-
-static inline void setpixel(char col, int x, int y) {
-	getcolor(col, &screen[y][x][0], &screen[y][x][1], &screen[y][x][2]);
-}
-
-static inline void rectfill(Rect* rect, int col) {
-	int end_x = rect->x + rect->w;
-	int end_y = rect->y + rect->h;
-
-	clamp(&rect->x);
-	clamp(&rect->y);
-	clamp(&end_x);
-	clamp(&end_y);
-
-	for (int x = rect->x; x < end_x; x++) {
-		for (int y = rect->y; y < end_y; y++) {
-			setpixel(col, x, y);
-		}
-	}
-}
-
-static inline void p8_rectfill(int x0, int y0, int x1, int y1, int col) {
-	int w = (x1 - x0 + 1);
-	int h = (y1 - y0 + 1);
-	if (w > 0 && h > 0) {
-		Rect rc = {x0,y0, w,h};
-		rectfill(&rc, col);
-	}
-}
 
 static inline int gettileflag(int tile, int flag) {
 	return tile < sizeof(tile_flags)/sizeof(*tile_flags) && (tile_flags[tile] & (1 << flag)) != 0;
@@ -132,7 +59,7 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 			if (!handle_render_cb)
 				goto end;
 
-			int sprite = INT_ARG();
+			int spr = INT_ARG();
 			int x = INT_ARG();
 			int y = INT_ARG();
 			int cols = INT_ARG();
@@ -140,18 +67,20 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 			int flipx = BOOL_ARG();
 			int flipy = BOOL_ARG();
 
-			(void)cols;
-			(void)rows;
-
 			assert(rows == 1 && cols == 1);
 
-			if (sprite >= 0) {
-				Rect dstrc = {
-					(x - camera_x), (y - camera_y),
-					8, 8
-				};
-				rectfill(&dstrc, sprite % 16);
-			}
+			p8_spr(spr, x, y, flipx, flipy);
+		} break;
+		case CELESTE_P8_PRINT: { //print(str,x,y,col)
+			if (!handle_render_cb)
+				goto end;
+
+			const char* str = va_arg(args, const char*);
+			int x = INT_ARG() - camera_x;
+			int y = INT_ARG() - camera_y;
+			int col = INT_ARG() % 16;
+
+			p8_print(str,x,y,col);
 		} break;
 		case CELESTE_P8_RECTFILL: { //rectfill(x0,y0,x1,y1,col)
 			if (!handle_render_cb)
@@ -179,26 +108,7 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 					int tile = tilemap_data[x + mx + (y + my)*128];
 					//hack
 					if (mask == 0 || (mask == 4 && tile_flags[tile] == 4) || gettileflag(tile, mask != 4 ? mask-1 : mask)) {
-						Rect srcrc = {
-							8*(tile % 16),
-							8*(tile / 16)
-						};
-						srcrc.w = srcrc.h = 8;
-						Rect dstrc = {
-							(tx+x*8 - camera_x), (ty+y*8 - camera_y),
-							8, 8
-						};
-
-						if (0) {
-							srcrc.x = srcrc.y = 0;
-							srcrc.w = srcrc.h = 8;
-							dstrc.x = x*8, dstrc.y = y*8;
-							dstrc.w = dstrc.h = 8;
-						}
-
-						int col = tile_flags[tile] % 16;
-
-						rectfill(&dstrc, col);
+						p8_spr(tile, (tx+x*8), (ty+y*8), false, false);
 					}
 				}
 			}
@@ -215,7 +125,7 @@ int pico8emu(CELESTE_P8_CALLBACK_TYPE call, ...) {
 void init(void) {
     Celeste_P8_set_call_func(pico8emu);
 
-	memset(screen, 0, sizeof(screen));
+	p8_init();
 
     Celeste_P8_set_rndseed(8);
     Celeste_P8_init();
@@ -294,13 +204,7 @@ unsigned char get_room(void) {
 }
 
 void get_screen(unsigned char input_screen[SCREEN_SIZE][SCREEN_SIZE][3]) {
-	for (int i = 0; i < SCREEN_SIZE; i++) {
-		for (int j = 0; j < SCREEN_SIZE; j++) {
-			for (int k = 0; k < 3; k++) {
-				input_screen[i][j][k] = screen[i][j][k];
-			}
-		}
-	}
+	return p8_get_screen(input_screen);
 }
 
 void set_render_enabled(bool enabled) {
