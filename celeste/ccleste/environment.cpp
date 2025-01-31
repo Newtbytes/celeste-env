@@ -226,6 +226,7 @@ void init(void) {
 		else buttons_state = 0;
 
 		Celeste_P8_update();
+		Celeste_P8_draw();
 	}
 }
 

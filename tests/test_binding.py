@@ -58,6 +58,22 @@ def test_get_screen_and_load():
     assert np.unique(screen).size > 1
     assert np.max(screen) > 0
 
+def test_first_step_not_black():
+    celeste = Celeste()
+
+    screen = celeste.get_screen()
+
+    assert np.unique(screen).size > 1
+    assert np.max(screen) > 0
+
+    celeste.step(0)
+
+    screen = celeste.get_screen()
+
+    assert np.unique(screen).size > 1
+    assert np.max(screen) > 0
+
+
 def test_step_action():
     celeste = Celeste()
 
