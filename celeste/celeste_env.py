@@ -11,7 +11,8 @@ def uint_limit(bits):
 # Level index / room x,y should be converted to something intuitive like 1 for level 1, etc.
 # TODO: implement room name in info dict
 # TODO: implement single room goal
-# once image rendering is implemented, implement human render mode with pygame or something
+# TODO: implement human render mode
+# TODO: implement ansi render mode (render only 8x8 tiles in ascii)
 class CelesteEnv(gym.Env):
     metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 

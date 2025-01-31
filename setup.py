@@ -9,6 +9,10 @@ os.environ["CC"] = "clang++"
 os.environ["CXX"] = "clang++"
 
 
+# TODO: manually compile cython extension
+# TODO: reimplement PGO
+
+
 def get_extensions():
     return [
         Extension(
