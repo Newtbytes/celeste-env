@@ -35,26 +35,6 @@ inline void setpixel(char col, int x, int y) {
 		getcolor(col, &screen[y][x][0], &screen[y][x][1], &screen[y][x][2]);
 }
 
-// sprite rendering
-// #define X(index) \
-// void sprite_func_##index(int x, int y) { \
-//     unsigned char sprite[SPR_SIZE*SPR_SIZE]; \
-//     memcpy(sprite, gfx[index], SPR_SIZE*SPR_SIZE); \
-//     for (int dy = 0; dy < SPR_SIZE; dy++) { \
-//         for (int dx = 0; dx < SPR_SIZE; dx++) { \
-//             setpixel(sprite[dy * 8 + dx], (x + dx), (y + dy)); \
-//         } \
-//     } \
-// }
-// SPRITE_LIST
-// #undef X
-
-// spr_renderer sprite_funcs[] = {
-//     #define X(index) sprite_func_##index,
-//     SPRITE_LIST
-//     #undef X
-// };
-
 void p8_spr(int spr, int x, int y, bool flipx, bool flipy) {
 	for (int dx = 0; dx < SPR_SIZE; dx++) {
     	for (int dy = 0; dy < SPR_SIZE; dy++) {
