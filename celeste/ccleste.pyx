@@ -60,7 +60,7 @@ cdef np.ndarray get_screen_as_np():
     return screen_np
 
 
-cdef bytes save_bytes():
+cdef inline bytes save_bytes():
     cdef void* savestate = save()
     if savestate is NULL:
         raise MemoryError("Failed to create savestate")
@@ -72,7 +72,7 @@ cdef bytes save_bytes():
     return py_savestate
 
 
-cdef void load_bytes(bytes savestate):
+cdef inline void load_bytes(bytes savestate):
     # Ensure savestate is the correct size
     cdef size_t expected_size = get_state_size()
     if len(savestate) != expected_size:
