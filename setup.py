@@ -25,8 +25,8 @@ def get_extensions():
             ],
             include_dirs=[".", "celeste/ccleste/", "celeste/ccleste/data/", np.get_include()],
             define_macros=[("CELESTE_P8_FIXEDP", 1), ("CELESTE_P8_HACKED_BALLOONS", 1)],
-            extra_compiler_args=["-O3", "-march=native", "-fPIC"],
-            extra_linker_args=["-flto"],
+            extra_compile_args=["-O3", "-march=native", "-fPIC"],
+            extra_link_args=["-flto"],
             language="c++"
         )
     ]
