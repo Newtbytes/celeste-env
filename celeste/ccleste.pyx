@@ -1,4 +1,6 @@
 from libcpp cimport bool
+from libc.stdlib cimport malloc
+from libc.string cimport memcpy
 
 cimport numpy as np
 import numpy as np
@@ -59,6 +61,19 @@ cdef class SaveState:
         savestate.size = size
         savestate.ptr_owner = owner
         return savestate
+
+    @staticmethod
+    def from_bytes(bytes data):
+        cdef size_t expected_size = get_state_size()
+        if len(data) != expected_size:
+            raise ValueError(f"Data must be exactly {expected_size} bytes")
+            
+        cdef void* ptr = malloc(expected_size)
+        if ptr is NULL:
+            raise MemoryError("Failed to allocate memory for savestate")
+            
+        memcpy(ptr, <char*>data, expected_size)
+        return SaveState.from_ptr(ptr, expected_size, owner=True)
 
     def to_bytes(self):
         return (<char*>self.ptr)[:self.size]
