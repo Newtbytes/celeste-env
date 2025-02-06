@@ -16,9 +16,9 @@ os.environ["CXX"] = "clang++"
 def get_extensions():
     return [
         Extension(
-            "ccleste",
+            "celeste.ccleste.ccleste",
             sources=[
-                "celeste/ccleste.pyx",
+                "celeste/ccleste/ccleste.pyx",
                 "celeste/ccleste/celeste.cpp",
                 "celeste/ccleste/pico8.cpp",
                 "celeste/ccleste/environment.cpp",
@@ -33,12 +33,12 @@ def get_extensions():
 
 
 setup(
-    name="ccleste",
+    name="celeste",
     packages=find_packages(),
-    install_requires=["Cython", "gymnasium"],
+    install_requires=["Cython", "gymnasium", "numpy"],
     ext_modules=cythonize(get_extensions(), compiler_directives={"language_level": "3"}),
     package_data={
-        "ccleste": ["*.pyx", "*.pxd", "ccleste/*.h", "ccleste/*.c", "ccleste/*.cpp"],
+        "celeste": ["*.pyx", "*.pxd", "ccleste/*.h", "ccleste/*.c", "ccleste/*.cpp"],
     },
     language="c++",
 )

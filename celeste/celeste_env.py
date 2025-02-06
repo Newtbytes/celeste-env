@@ -1,7 +1,7 @@
 import gymnasium as gym
 import numpy as np
 
-from ccleste import Celeste
+from .ccleste import Celeste
 
 
 def uint_limit(bits):
