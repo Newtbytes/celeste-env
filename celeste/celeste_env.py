@@ -58,7 +58,7 @@ class CelesteEnv(gym.Env):
         if self.obs_type == "rgb_array":
             return self.get_screen()
         elif self.obs_type == "ram":
-            return np.frombuffer(self.save_state, dtype=np.uint8)
+            return np.frombuffer(self.save_state.to_bytes(), dtype=np.uint8)
 
     def _reward(self, info, room):
         reward = 5 if room != self._last_room else 0

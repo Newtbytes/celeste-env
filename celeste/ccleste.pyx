@@ -44,6 +44,37 @@ cdef extern from "environment.h":
     void set_render_enabled(bool enabled)
 
 
+cdef class SaveState:
+    cdef void* ptr
+    cdef size_t size
+    cdef bool ptr_owner
+
+    def __cinit__(self):
+        self.ptr_owner = False
+
+    @staticmethod
+    cdef SaveState from_ptr(void* ptr, size_t size, bool owner=False):
+        cdef SaveState savestate = SaveState.__new__(SaveState)
+        savestate.ptr = ptr
+        savestate.size = size
+        savestate.ptr_owner = owner
+        return savestate
+
+    def to_bytes(self):
+        return (<char*>self.ptr)[:self.size]
+    
+    def __eq__(self, other):
+        return self.to_bytes() == other.to_bytes()
+
+    def __len__(self):
+        return self.size
+
+    def __dealloc__(self):
+        if self.ptr is not NULL and self.ptr_owner is True:
+            free_state(self.ptr)
+            self.ptr = NULL
+
+
 cdef np.ndarray get_screen_as_np():
     cdef unsigned char screen[SCREEN_SIZE][SCREEN_SIZE][3]
     get_screen(screen)
@@ -59,26 +90,20 @@ cdef np.ndarray get_screen_as_np():
 
     return screen_np
 
-
-cdef inline bytes save_bytes():
+cdef inline SaveState py_save_state():
     cdef void* savestate = save()
     if savestate is NULL:
         raise MemoryError("Failed to create savestate")
-    
-    # Convert void* to Python bytes for safe storage
-    cdef size_t state_size = get_state_size()
-    py_savestate = (<char*>savestate)[:state_size]
-    free_state(savestate)
-    return py_savestate
 
+    return SaveState.from_ptr(savestate, get_state_size(), owner=True)
 
-cdef inline void load_bytes(bytes savestate):
+cdef inline void py_load_state(SaveState savestate):
     # Ensure savestate is the correct size
     cdef size_t expected_size = get_state_size()
-    if len(savestate) != expected_size:
+    if savestate.size != expected_size:
         raise ValueError(f"Savestate must be exactly {expected_size} bytes")
 
-    load(<const void*>(<const char*>savestate))
+    load(savestate.ptr)
 
 
 cdef class Celeste:
@@ -109,10 +134,10 @@ cdef class Celeste:
         }
 
     def save(self):
-        return save_bytes()
+        return py_save_state()
 
-    def load(self, savestate: bytes):
-        load_bytes(savestate)
+    def load(self, SaveState savestate):
+        py_load_state(savestate)
 
     def get_state_size(self):
         return get_state_size()
