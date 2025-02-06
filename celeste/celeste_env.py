@@ -27,7 +27,6 @@ class CelesteEnv(gym.Env):
 
         self.celeste = Celeste()
         self.initial_state = self.celeste.save()
-        self.save_state = self.celeste.save()
         self.screen = None
 
         self._last_room = None
@@ -38,7 +37,7 @@ class CelesteEnv(gym.Env):
             self.observation_space = gym.spaces.Box(
                 low=0,
                 high=255,
-                shape=(len(self.save_state),),
+                shape=(len(self.initial_state),),
                 dtype=np.uint8,
             )
 
@@ -58,7 +57,7 @@ class CelesteEnv(gym.Env):
         if self.obs_type == "rgb_array":
             return self.get_screen()
         elif self.obs_type == "ram":
-            return np.frombuffer(self.save_state.to_bytes(), dtype=np.uint8)
+            return np.frombuffer(self.save().to_bytes(), dtype=np.uint8)
 
     def _reward(self, info, room):
         reward = 5 if room != self._last_room else 0
@@ -78,7 +77,6 @@ class CelesteEnv(gym.Env):
         super().reset(seed=seed)
 
         self.load(self.initial_state)
-        self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
         self._last_room = info["room"]
@@ -95,7 +93,6 @@ class CelesteEnv(gym.Env):
         self.screen = None
 
         self.celeste.step(action)
-        self.save_state = self.celeste.save()
 
         info = self.celeste.get_info()
         room = info["room"]
@@ -115,7 +112,7 @@ class CelesteEnv(gym.Env):
         return self._obs(), reward, room >= 30, info["deaths"] > 0, info
 
     def save(self):
-        return self.save_state[:]
+        return self.celeste.save()
     
     def load(self, savestate):
         self.celeste.load(savestate)
